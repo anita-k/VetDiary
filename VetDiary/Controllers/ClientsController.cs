@@ -54,7 +54,7 @@ namespace VetDiary.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title")] Client client)
+        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Phone,Address,Email")] Client client)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace VetDiary.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title")] Client client)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Phone,Address,Email")] Client client)
         {
             if (id != client.Id)
             {

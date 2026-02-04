@@ -8,8 +8,24 @@ namespace VetDiary.Data.Models
         public int Id { get; set; }
 
         [Required]
-        public string Title { get; set; } = string.Empty;
+        [MaxLength(50)]
+        public string FirstName { get; set; } = null!;
 
+        [Required]
+        [MaxLength(50)]
+        public string LastName { get; set; } = null!;
+
+        [Required]
+        [Phone]
+        [MaxLength(30)]
+        public string Phone { get; set; } = null!;
+
+        [MaxLength(250)]
+        public string? Address { get; set; }
+
+        [EmailAddress]
+        [MaxLength(150)]
+        public string? Email { get; set; }
 
     }
 }
