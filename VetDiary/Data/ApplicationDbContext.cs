@@ -13,6 +13,17 @@ namespace VetDiary.Data
         }
         public DbSet<Client> Clients {  get; set; }
 
+        public DbSet<Species> Species { get; set; }
+        public DbSet<Breed> Breeds { get; set; }
+
+        public DbSet<Pet> Pets { get; set; }
+
+        public DbSet<VisitReason> VisitReasons { get; set; }
+        
+        public DbSet<DiaryEntry> DiaryEntries { get; set; }
+
+
+
     }
     
 }
