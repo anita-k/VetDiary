@@ -22,8 +22,12 @@ namespace VetDiary.Data
         
         public DbSet<DiaryEntry> DiaryEntries { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
 
+            builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        }
+    }       
 
-    }
-    
 }
