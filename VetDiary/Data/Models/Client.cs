@@ -26,6 +26,9 @@ namespace VetDiary.Data.Models
         [EmailAddress]
         [MaxLength(150)]
         public string? Email { get; set; }
+              
+
+        public ICollection<Pet> Pets { get; } = new List<Pet>();
 
     }
 }

@@ -12,6 +12,6 @@ namespace VetDiary.Data.Models
         public string Name { get; set; } = null!;
 
         public ICollection<Breed> Breeds { get; } = new List<Breed>();
-
+        public ICollection<Pet> Pets { get; } = new List<Pet>();
     }
 }

@@ -16,6 +16,7 @@ namespace VetDiary.Data.Models
                 
         public Species Species { get; set; } = null!;
 
+        public ICollection<Pet> Pets { get; } = new List<Pet>();
 
     }
 }

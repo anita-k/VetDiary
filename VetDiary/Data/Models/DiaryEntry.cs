@@ -8,13 +8,17 @@ namespace VetDiary.Data.Models
         public int Id { get; set; }
 
         [Required]
-        public int PetId { get; set; } 
+        public int PetId { get; set; }
+
+        public Pet Pet { get; set; } = null!;
 
         [Required]
         public DateTime VisitDate { get; set; }
 
         [Required]
         public int VisitReasonId { get; set; }
+
+        public VisitReason VisitReason { get; set; } = null!;
 
         public string? Description { get; set; } = null;
 

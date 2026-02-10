@@ -11,6 +11,6 @@ namespace VetDiary.Data.Models
         [MaxLength(50)]
         public string Name { get; set; } = null!;
 
-
+        public ICollection<DiaryEntry> DiaryEntries { get; } = new List<DiaryEntry>();
     }
 }
