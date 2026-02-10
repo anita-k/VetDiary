@@ -21,6 +21,8 @@ namespace VetDiary.Data.Configurations
 
         public void Configure(EntityTypeBuilder<VisitReason> builder)
         {
+            builder.HasKey(v => v.Id);
+
             builder.HasData(VisitReasons);
         }              
 
