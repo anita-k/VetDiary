@@ -15,6 +15,9 @@ namespace VetDiary.Data.Models
         [MaxLength(50)]
         public string LastName { get; set; } = null!;
 
+        [Display(Name = "Full Name")]
+        public string FullName => FirstName + " " + LastName;
+
         [Required]
         [Phone]
         [MaxLength(30)]

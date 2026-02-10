@@ -51,7 +51,7 @@ namespace VetDiary.Controllers
         public IActionResult Create(int? clientId)
         {            
             ViewData["BreedId"] = new SelectList(_context.Breeds, "Id", "Name");
-            ViewData["ClientId"] = new SelectList(_context.Clients, "Id", "FirstName", clientId);
+            ViewData["ClientId"] = new SelectList(_context.Clients, "Id", "FullName", clientId);
             ViewData["SpeciesId"] = new SelectList(_context.Species, "Id", "Name");
 
             return View();
