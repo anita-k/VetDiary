@@ -62,7 +62,7 @@
             @Html.DisplayNameFor(model => model.Breed)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Breed.Name)
+            @(Model?.Breed?.Name)
         </dd>
     </dl>
 </div>
