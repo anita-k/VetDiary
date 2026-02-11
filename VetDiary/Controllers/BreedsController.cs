@@ -154,6 +154,7 @@ namespace VetDiary.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+
         }
 
         private bool BreedExists(int id)

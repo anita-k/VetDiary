@@ -7,22 +7,31 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using VetDiary.Data;
 using VetDiary.Data.Models;
+using VetDiary.Services.Interfaces;
 
 namespace VetDiary.Controllers
 {
     public class VisitReasonsController : Controller
     {
+        private readonly IVisitReasonsService _visitReasonsService;
+        //TODO: TO REMOVE WHEN SERVICE IS FULLY READY
         private readonly ApplicationDbContext _context;
 
-        public VisitReasonsController(ApplicationDbContext context)
+        //TODO: TO REMOVE WHEN SERVICE IS FULLY READY
+        public VisitReasonsController(
+            ApplicationDbContext context, 
+            IVisitReasonsService visitReasonsService
+            )
         {
             _context = context;
+            _visitReasonsService = visitReasonsService;
         }
 
         // GET: VisitReasons
         public async Task<IActionResult> Index()
         {
-            return View(await _context.VisitReasons.ToListAsync());
+            var visitReasons = await _visitReasonsService.GetAllVisitReasonsAsync();
+            return View(visitReasons);
         }
 
         // GET: VisitReasons/Details/5
@@ -32,14 +41,7 @@ namespace VetDiary.Controllers
             {
                 return NotFound();
             }
-
-            var visitReason = await _context.VisitReasons
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (visitReason == null)
-            {
-                return NotFound();
-            }
-
+            var visitReason = await _visitReasonsService.GetVisitReasonDetailsByIdAsync((int)id);
             return View(visitReason);
         }
 

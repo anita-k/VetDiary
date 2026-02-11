@@ -2,5 +2,18 @@
   <Folder Name="/Solution Items/">
     <File Path="README.md" />
   </Folder>
-  <Project Path="VetDiary/VetDiary.csproj" />
+  <Folder Name="/Solution Items/Data/">
+    <Project Path="VetDiary.Data.Models/VetDiary.Data.Models.csproj" Id="baf4ad23-e1eb-4997-a613-956210d11f0c" />
+    <Project Path="VetDiary.Data/VetDiary.Data.csproj" Id="297d4f86-ed94-49bd-bacb-f1ea52694bb4" />
+  </Folder>
+  <Folder Name="/Solution Items/Services/">
+    <Project Path="VetDiary.Services/VetDiary.Services.csproj" Id="732db6dc-73aa-46f3-9ab4-f59415033b25" />
+  </Folder>
+  <Folder Name="/Solution Items/Shared/">
+    <Project Path="VetDiary.Shared/VetDiary.Shared.csproj" Id="a35596ce-fa3b-4d6a-accf-dbacb88f0075" />
+  </Folder>
+  <Folder Name="/Solution Items/Web/">
+    <Project Path="VetDiary.ViewModels/VetDiary.ViewModels.csproj" Id="f99cdd0d-fb38-4556-bc39-bff3c1262116" />
+    <Project Path="VetDiary/VetDiary.Web.csproj" />
+  </Folder>
 </Solution>
