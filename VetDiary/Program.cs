@@ -16,6 +16,11 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddScoped<IVisitReasonsService, VisitReasonsService>();
+builder.Services.AddScoped<ISpeciesService, SpeciesService>();
+builder.Services.AddScoped<IBreedsService, BreedsService>();
+builder.Services.AddScoped<IClientsService, ClientsService>();
+builder.Services.AddScoped<IPetsService, PetsService>();
+builder.Services.AddScoped<IDiaryEntriesService, DiaryEntriesService>();
 
 builder.Services.AddControllersWithViews();
 

@@ -1,28 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using VetDiary.Data;
-using VetDiary.Data.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using VetDiary.Services.Interfaces;
+using VetDiary.ViewModels.Species;
 
 namespace VetDiary.Controllers
 {
     public class SpeciesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ISpeciesService _speciesService;
 
-        public SpeciesController(ApplicationDbContext context)
+        public SpeciesController(ISpeciesService speciesService)
         {
-            _context = context;
+            _speciesService = speciesService;
         }
 
         // GET: Species
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Species.ToListAsync());
+            var species = await _speciesService.GetAllSpeciesAsync();
+            return View(species);
         }
 
         // GET: Species/Details/5
@@ -32,34 +27,33 @@ namespace VetDiary.Controllers
             {
                 return NotFound();
             }
-
-            var species = await _context.Species
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (species == null)
+            try
+            {
+                var species = await _speciesService.GetSpeciesDetailsByIdAsync((int)id);
+                return View(species);
+            }
+            catch (ArgumentException)
             {
                 return NotFound();
             }
-
-            return View(species);
         }
 
         // GET: Species/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             return View();
         }
 
         // POST: Species/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Species species)
+        public async Task<IActionResult> Create(SpeciesCreateViewModel species)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(species);
-                await _context.SaveChangesAsync();
+
+                await _speciesService.AddSpeciesAsync(species);
+
                 return RedirectToAction(nameof(Index));
             }
             return View(species);
@@ -72,8 +66,7 @@ namespace VetDiary.Controllers
             {
                 return NotFound();
             }
-
-            var species = await _context.Species.FindAsync(id);
+            var species = await _speciesService.GetSpeciesForEditAsync((int)id);
             if (species == null)
             {
                 return NotFound();
@@ -82,35 +75,13 @@ namespace VetDiary.Controllers
         }
 
         // POST: Species/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Species species)
+        public async Task<IActionResult> Edit(SpeciesEditViewModel species)
         {
-            if (id != species.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(species);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SpeciesExists(species.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _speciesService.EditSpeciesAsync(species);
                 return RedirectToAction(nameof(Index));
             }
             return View(species);
@@ -123,9 +94,7 @@ namespace VetDiary.Controllers
             {
                 return NotFound();
             }
-
-            var species = await _context.Species
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var species = await _speciesService.GetSpeciesForEditAsync((int)id);
             if (species == null)
             {
                 return NotFound();
@@ -139,19 +108,9 @@ namespace VetDiary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var species = await _context.Species.FindAsync(id);
-            if (species != null)
-            {
-                _context.Species.Remove(species);
-            }
-
-            await _context.SaveChangesAsync();
+            await _speciesService.DeleteSpeciesAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SpeciesExists(int id)
-        {
-            return _context.Species.Any(e => e.Id == id);
-        }
     }
 }
