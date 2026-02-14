@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using VetDiary.Services.Interfaces;
 using VetDiary.ViewModels.VisitReason;
 
 namespace VetDiary.Controllers
 {
-    public class VisitReasonsController : Controller
+    public class VisitReasonsController : BaseController
     {
         private readonly IVisitReasonsService _visitReasonsService;
 
@@ -16,6 +17,7 @@ namespace VetDiary.Controllers
         }
 
         // GET: VisitReasons
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var visitReasons = await _visitReasonsService.GetAllVisitReasonsAsync();
@@ -23,6 +25,7 @@ namespace VetDiary.Controllers
         }
 
         // GET: VisitReasons/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)

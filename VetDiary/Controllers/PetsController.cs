@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using VetDiary.Data;
@@ -6,7 +7,7 @@ using VetDiary.Data.Models;
 
 namespace VetDiary.Controllers
 {
-    public class PetsController : Controller
+    public class PetsController : BaseController
     {
         private readonly ApplicationDbContext _context;
 
@@ -16,6 +17,7 @@ namespace VetDiary.Controllers
         }
 
         // GET: Pets
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Pets.Include(p => p.Breed).Include(p => p.Client).Include(p => p.Species);
@@ -23,6 +25,7 @@ namespace VetDiary.Controllers
         }
 
         // GET: Pets/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)

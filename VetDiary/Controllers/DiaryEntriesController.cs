@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VetDiary.Data;
 using VetDiary.Data.Models;
 
 namespace VetDiary.Controllers
 {
-    public class DiaryEntriesController : Controller
+    public class DiaryEntriesController : BaseController
     {
         private readonly ApplicationDbContext _context;
 
@@ -15,12 +16,14 @@ namespace VetDiary.Controllers
         }
 
         // GET: DiaryEntries
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(await _context.DiaryEntries.ToListAsync());
         }
 
         // GET: DiaryEntries/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)

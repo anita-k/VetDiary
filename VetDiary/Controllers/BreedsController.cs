@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using VetDiary.Data.Models;
 using VetDiary.Services;
 using VetDiary.Services.Interfaces;
@@ -6,7 +7,7 @@ using VetDiary.ViewModels.Breed;
 
 namespace VetDiary.Controllers
 {
-    public class BreedsController : Controller
+    public class BreedsController : BaseController
     {
         private readonly IBreedsService _breedsService;
 
@@ -16,6 +17,7 @@ namespace VetDiary.Controllers
         }
 
         // GET: Breeds
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var breeds = await _breedsService.GetAllBreedsAsync();
@@ -23,6 +25,7 @@ namespace VetDiary.Controllers
         }
 
         // GET: Breeds/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
