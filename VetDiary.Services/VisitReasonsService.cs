@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VetDiary.Data;
+using VetDiary.Data.Models;
 using VetDiary.Services.Interfaces;
-using VetDiary.ViewModels;
+using VetDiary.ViewModels.VisitReason;
 
 namespace VetDiary.Services
 {
@@ -13,9 +14,10 @@ namespace VetDiary.Services
         {
             _context = context;
         }
-        public async Task<IEnumerable<VisitReasonViewModel>> GetAllVisitReasonsAsync()
+
+        public async Task<IEnumerable<VisitReasonIndexViewModel>> GetAllVisitReasonsAsync()
         {
-            return await _context.VisitReasons.Select(vr => new VisitReasonViewModel
+            return await _context.VisitReasons.Select(vr => new VisitReasonIndexViewModel
             {
                 Id = vr.Id,
                 Name = vr.Name,
@@ -23,22 +25,7 @@ namespace VetDiary.Services
             .ToListAsync();
         }
 
-        public async Task<VisitReasonViewModel> GetVisitReasonByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<VisitReasonCreateViewModel> GetVisitReasonCreateViewModelAsync()
-        {
-            throw new NotImplementedException { };
-        }
-
-        public async Task SaveVisitReasonAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<VisitReasonViewModel> GetVisitReasonDetailsByIdAsync(int id)
+        public async Task<VisitReasonDetailsViewModel> GetVisitReasonDetailsByIdAsync(int id)
         {
             var visitReason = await _context.VisitReasons
                 .FirstOrDefaultAsync(vr => vr.Id == id);
@@ -48,27 +35,54 @@ namespace VetDiary.Services
                 throw new InvalidOperationException("Not found");
             }
 
-            return new VisitReasonViewModel
+            return new VisitReasonDetailsViewModel
             {
                 Id = visitReason.Id,
                 Name = visitReason.Name,
             };
         }
 
-        public async Task<VisitReasonViewModel> GetVisitReasonForEditAsync(int id)
+        public async Task<VisitReasonCreateViewModel> GetVisitReasonCreateViewModelAsync()
         {
-            throw new NotImplementedException();
-        }
-        public async Task EditVisitReasonAsync(VisitReasonViewModel model)
-        {
-            throw new NotImplementedException();
+            throw new NotImplementedException { };
         }
 
-        public async Task RemoveVisitReasonAsync(int id)
+        public async Task AddVisitReasonAsync(VisitReasonCreateViewModel model)
         {
-            throw new NotImplementedException();
+            var visitReason = new VisitReason
+            {
+                Name = model.Name,
+            };
+
+            _context.VisitReasons.Add(visitReason);
+            await _context.SaveChangesAsync();
         }
 
+        public async Task<VisitReasonEditViewModel> GetVisitReasonForEditAsync(int id)
+        {
+            var visitReason = await _context.VisitReasons.FirstOrDefaultAsync(r => r.Id == id);
+
+            if (visitReason == null)
+            {
+                throw new ArgumentException("Visit Reason not found.");
+            }
+
+            return new VisitReasonEditViewModel
+            {
+                Name = visitReason.Name,
+            };
+        }
+
+        public async Task EditVisitReasonAsync(VisitReasonEditViewModel model)
+        {
+                var visitReason = await _context.VisitReasons.FirstOrDefaultAsync(r => r.Id == model.Id);
+                if (visitReason == null)
+                {
+                    throw new ArgumentException("Visit Reason not found.");
+                }
+                visitReason.Name = model.Name;
+                await _context.SaveChangesAsync();
+        }
 
     }
 }

@@ -1,28 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VetDiary.ViewModels;
+﻿using VetDiary.ViewModels.VisitReason;
 
 namespace VetDiary.Services.Interfaces
 {
     public interface IVisitReasonsService
     {
-        Task<IEnumerable<VisitReasonViewModel>> GetAllVisitReasonsAsync();
-        Task<VisitReasonViewModel> GetVisitReasonByIdAsync(int id);
+        Task<IEnumerable<VisitReasonIndexViewModel>> GetAllVisitReasonsAsync();
 
-        Task<VisitReasonViewModel> GetVisitReasonDetailsByIdAsync(int id);
+        Task<VisitReasonDetailsViewModel> GetVisitReasonDetailsByIdAsync(int id);
 
         Task<VisitReasonCreateViewModel> GetVisitReasonCreateViewModelAsync();
 
-        Task SaveVisitReasonAsync(int id);
+        Task AddVisitReasonAsync(VisitReasonCreateViewModel model);
 
-        Task RemoveVisitReasonAsync(int id);
+        Task<VisitReasonEditViewModel> GetVisitReasonForEditAsync(int id);
 
-        Task<VisitReasonViewModel> GetVisitReasonForEditAsync(int id);
-
-        Task EditVisitReasonAsync(VisitReasonViewModel model);
+        Task EditVisitReasonAsync(VisitReasonEditViewModel model);
 
     }
 }

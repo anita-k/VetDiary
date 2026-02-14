@@ -1,0 +1,24 @@
+﻿using VetDiary.ViewModels.Species;
+
+namespace VetDiary.Services.Interfaces
+{
+    public interface ISpeciesService
+    {
+        Task<IEnumerable<SpeciesIndexViewModel>> GetAllSpeciesAsync();
+
+        Task<SpeciesDetailsViewModel> GetSpeciesDetailsByIdAsync(int id);
+
+        Task<SpeciesCreateViewModel> GetSpeciesCreateViewModelAsync();
+
+        Task AddSpeciesAsync(SpeciesCreateViewModel model);
+
+        Task<SpeciesEditViewModel> GetSpeciesForEditAsync(int id);
+
+        Task EditSpeciesAsync(SpeciesEditViewModel model);
+
+        Task<SpeciesDeleteViewModel> GetSpeciesDeleteDetailsAsync(int id);
+
+        Task DeleteSpeciesAsync(int id);
+
+    }
+}
