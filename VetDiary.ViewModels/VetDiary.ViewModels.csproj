@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VetDiary.Data.Models\VetDiary.Data.Models.csproj" />
+  </ItemGroup>
+
 </Project>
