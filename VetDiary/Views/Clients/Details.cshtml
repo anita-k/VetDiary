@@ -6,42 +6,103 @@
 
 <h1>Details</h1>
 
-<div>
-    <h4>Client</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Phone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Phone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Address)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-    </dl>
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <div>
+                <h4>Client</h4>
+                <hr />
+                <dl class="row">
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.FirstName)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.FirstName)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.LastName)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.LastName)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Phone)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Phone)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Address)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Address)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Email)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Email)
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        <div class="col-6">
+            <div>
+                <h4>Pets</h4>
+                <hr />
+                @if (Model.Pets.Count > 0)
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Pet Name
+                                </th>
+                                <th>
+                                    Species
+                                </th>
+                                <th>
+                                    Breed
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Pets)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Species.Name)
+                                    </td>
+                                    <td>
+                                        @(item.Breed?.Name)
+                                    </td>
+                                    <td>
+                                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                } else
+                {
+                   <div>
+                        This client doesn't have  registered pets yet
+                   </div>
+                }
+                <a asp-controller="Pets" asp-action="Create" asp-route-clientId="@Model?.Id">Add Pet</a>    
+            </div>
+        </div>
+    </div>
 </div>
+
+
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-controller="Pets" asp-action="Create" asp-route-clientId="@Model?.Id">Add Pet</a> |
