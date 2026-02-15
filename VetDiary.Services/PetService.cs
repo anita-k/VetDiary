@@ -1,46 +1,54 @@
-﻿using VetDiary.Services.Interfaces;
+﻿using VetDiary.Data;
+using VetDiary.Services.Interfaces;
 using VetDiary.ViewModels.Pet;
 
 namespace VetDiary.Services
 {
     public class PetsService : IPetsService
     {
-        public Task AddPetAsync(PetCreateViewModel model)
+
+        private readonly ApplicationDbContext _context;
+
+        public PetsService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+        public async Task AddPetAsync(PetCreateViewModel model)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeletePetAsync(int id)
+        public async Task DeletePetAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task EditPetAsync(PetEditViewModel model)
+        public async Task EditPetAsync(PetEditViewModel model)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<PetIndexViewModel>> GetAllPetAsync()
+        public async Task<IEnumerable<PetIndexViewModel>> GetAllPetAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<PetCreateViewModel> GetPetCreateViewModelAsync()
+        public async Task<PetCreateViewModel> GetPetCreateViewModelAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<PetDeleteViewModel> GetPetDeleteDetailsAsync(int id)
+        public async Task<PetDeleteViewModel> GetPetDeleteDetailsAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PetDetailsViewModel> GetPetDetailsByIdAsync(int id)
+        public async Task<PetDetailsViewModel> GetPetDetailsByIdAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PetEditViewModel> GetPetForEditAsync(int id)
+        public async Task<PetEditViewModel> GetPetForEditAsync(int id)
         {
             throw new NotImplementedException();
         }

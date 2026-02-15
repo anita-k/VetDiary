@@ -57,7 +57,6 @@ namespace VetDiary.Services
 
         public async Task<BreedCreateViewModel> GetBreedCreateViewModelAsync()
         {
-
             IEnumerable<SpeciesIndexViewModel> species = await _context.Species
              .Select(s => new SpeciesIndexViewModel
              {
@@ -119,21 +118,6 @@ namespace VetDiary.Services
             await _context.SaveChangesAsync();
         }
 
-
-        public async Task DeleteBreedAsync(int id)
-        {
-            var breed = await _context.Breeds
-                .FirstOrDefaultAsync(b => b.Id == id);
-
-            if (breed == null)
-            {
-                throw new ArgumentException("Breed not found.");
-            }
-
-            _context.Breeds.Remove(breed);
-            await _context.SaveChangesAsync();
-        }
-
         public async Task<BreedDeleteViewModel> GetBreedDeleteDetailsAsync(int id)
         {
             Breed? breed = await _context.Breeds
@@ -161,5 +145,21 @@ namespace VetDiary.Services
                 }
             };
         }
+
+        public async Task DeleteBreedAsync(int id)
+        {
+            var breed = await _context.Breeds
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (breed == null)
+            {
+                throw new ArgumentException("Breed not found.");
+            }
+
+            _context.Breeds.Remove(breed);
+            await _context.SaveChangesAsync();
+        }
+
+
     }
 }

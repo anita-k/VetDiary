@@ -13,10 +13,12 @@ namespace VetDiary.ViewModels.Client
         public string LastName { get; set; } = null!;
 
         [Required]
+        [Phone]
         public string Phone { get; set; } = null!;
 
         public string? Address { get; set; }
 
+        [EmailAddress]
         public string? Email { get; set; }
                
     }

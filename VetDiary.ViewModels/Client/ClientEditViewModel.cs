@@ -16,14 +16,14 @@ namespace VetDiary.ViewModels.Client
         [Display(Name = "Last Name")]
         public string LastName { get; set; } = null!;
 
-        [Required]    
+        [Required]
+        [Phone]
         public string Phone { get; set; } = null!;
 
         public string? Address { get; set; }
 
+        [EmailAddress]
         public string? Email { get; set; }
-
-        public ICollection<PetDetailsViewModel> Pets { get; set; } = new List<PetDetailsViewModel>();
 
     }
 }

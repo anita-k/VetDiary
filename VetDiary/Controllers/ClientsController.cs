@@ -1,25 +1,25 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using VetDiary.Data;
-using VetDiary.Data.Models;
+using VetDiary.Services.Interfaces;
+using VetDiary.ViewModels.Client;
 
 namespace VetDiary.Controllers
 {
     public class ClientsController : BaseController
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IClientsService _clientsService;
 
-        public ClientsController(ApplicationDbContext context)
+        public ClientsController(IClientsService clientsService)
         {
-            _context = context;
+            _clientsService = clientsService;
         }
 
         // GET: Clients
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Clients.ToListAsync());
+            var clients = await _clientsService.GetAllClientsAsync();
+            return View(clients);
         }
 
         // GET: Clients/Details/5
@@ -30,15 +30,15 @@ namespace VetDiary.Controllers
             {
                 return NotFound();
             }
-
-            var client = await _context.Clients
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (client == null)
+            try
+            {
+                var breed = await _clientsService.GetClientDetailsByIdAsync((int)id);
+                return View(breed);
+            }
+            catch (ArgumentException)
             {
                 return NotFound();
             }
-
-            return View(client);
         }
 
         // GET: Clients/Create
@@ -48,16 +48,14 @@ namespace VetDiary.Controllers
         }
 
         // POST: Clients/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Phone,Address,Email")] Client client)
+        public async Task<IActionResult> Create(ClientCreateViewModel client)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(client);
-                await _context.SaveChangesAsync();
+                await _clientsService.AddClientAsync(client);
+
                 return RedirectToAction(nameof(Index));
             }
             return View(client);
@@ -70,45 +68,22 @@ namespace VetDiary.Controllers
             {
                 return NotFound();
             }
-
-            var client = await _context.Clients.FindAsync(id);
-            if (client == null)
+            var breed = await _clientsService.GetClientForEditAsync((int)id);
+            if (breed == null)
             {
                 return NotFound();
             }
-            return View(client);
+            return View(breed);
         }
 
         // POST: Clients/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Phone,Address,Email")] Client client)
+        public async Task<IActionResult> Edit(ClientEditViewModel client)
         {
-            if (id != client.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(client);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ClientExists(client.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _clientsService.EditClientAsync(client);
                 return RedirectToAction(nameof(Index));
             }
             return View(client);
@@ -121,15 +96,12 @@ namespace VetDiary.Controllers
             {
                 return NotFound();
             }
-
-            var client = await _context.Clients
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (client == null)
+            var breed = await _clientsService.GetClientDeleteDetailsAsync((int)id);
+            if (breed == null)
             {
                 return NotFound();
             }
-
-            return View(client);
+            return View(breed);
         }
 
         // POST: Clients/Delete/5
@@ -137,19 +109,9 @@ namespace VetDiary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var client = await _context.Clients.FindAsync(id);
-            if (client != null)
-            {
-                _context.Clients.Remove(client);
-            }
-
-            await _context.SaveChangesAsync();
+            await _clientsService.DeleteClientAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ClientExists(int id)
-        {
-            return _context.Clients.Any(e => e.Id == id);
-        }
     }
 }

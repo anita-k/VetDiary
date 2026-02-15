@@ -1,4 +1,5 @@
-﻿using VetDiary.Services.Interfaces;
+﻿using VetDiary.Data;
+using VetDiary.Services.Interfaces;
 using VetDiary.ViewModels.DiaryEntry;
 using VetDiary.ViewModels.Pet;
 
@@ -6,42 +7,49 @@ namespace VetDiary.Services
 {
     public class DiaryEntriesService : IDiaryEntriesService
     {
-        public Task AddDiaryEntryAsync(DiaryEntryCreateViewModel model)
+
+        private readonly ApplicationDbContext _context;
+
+        public DiaryEntriesService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+        public async Task AddDiaryEntryAsync(DiaryEntryCreateViewModel model)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteDiaryEntryAsync(int id)
+        public async Task DeleteDiaryEntryAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task EditDiaryEntryAsync(DiaryEntryEditViewModel model)
+        public async Task EditDiaryEntryAsync(DiaryEntryEditViewModel model)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<DiaryEntryIndexViewModel>> GetAllDiaryEntryAsync()
+        public async Task<IEnumerable<DiaryEntryIndexViewModel>> GetAllDiaryEntryAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<DiaryEntryCreateViewModel> GetDiaryEntryCreateViewModelAsync()
+        public async Task<DiaryEntryCreateViewModel> GetDiaryEntryCreateViewModelAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<DiaryEntryDeleteViewModel> GetDiaryEntryDeleteDetailsAsync(int id)
+        public async Task<DiaryEntryDeleteViewModel> GetDiaryEntryDeleteDetailsAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<DiaryEntryDetailsViewModel> GetDiaryEntryDetailsByIdAsync(int id)
+        public async Task<DiaryEntryDetailsViewModel> GetDiaryEntryDetailsByIdAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<DiaryEntryEditViewModel> GetDiaryEntryForEditAsync(int id)
+        public async Task<DiaryEntryEditViewModel> GetDiaryEntryForEditAsync(int id)
         {
             throw new NotImplementedException();
         }

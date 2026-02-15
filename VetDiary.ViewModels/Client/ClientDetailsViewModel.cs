@@ -20,6 +20,6 @@ namespace VetDiary.ViewModels.Client
 
         public string? Email { get; set; }
 
-        public ICollection<PetDetailsViewModel> Pets { get; } = new List<PetDetailsViewModel>();
+        public ICollection<PetIndexViewModel> Pets { get; set; } = new List<PetIndexViewModel>();
     }
 }

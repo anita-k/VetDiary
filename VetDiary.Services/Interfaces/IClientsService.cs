@@ -4,7 +4,7 @@ namespace VetDiary.Services.Interfaces
 {
     public interface IClientsService
     {
-        Task<IEnumerable<ClientIndexViewModel>> GetAllClientAsync();
+        Task<IEnumerable<ClientIndexViewModel>> GetAllClientsAsync();
 
         Task<ClientDetailsViewModel> GetClientDetailsByIdAsync(int id);
 
