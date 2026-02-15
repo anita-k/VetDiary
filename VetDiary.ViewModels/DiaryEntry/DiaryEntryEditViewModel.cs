@@ -11,7 +11,7 @@ namespace VetDiary.ViewModels.DiaryEntry
         [Required]
         public int PetId { get; set; }
 
-        public PetDetailsViewModel Pet { get; set; } = null!;
+        public PetDetailsViewModel? Pet { get; set; }
 
         [Required]
         public DateTime VisitDate { get; set; }
@@ -19,7 +19,7 @@ namespace VetDiary.ViewModels.DiaryEntry
         [Required]
         public int VisitReasonId { get; set; }
 
-        public VisitReasonIndexViewModel VisitReason { get; set; } = null!;
+        public VisitReasonIndexViewModel? VisitReason { get; set; }
 
         public string? Description { get; set; } = null;
 
@@ -35,6 +35,9 @@ namespace VetDiary.ViewModels.DiaryEntry
 
         [Range(1, 9)]
         public int? BodyConditionScore { get; set; } = null;
+
+        public IEnumerable<PetIndexViewModel>? Pets { get; set; }
+        public IEnumerable<VisitReasonIndexViewModel>? VisitReasons { get; set; }
 
     }
 }

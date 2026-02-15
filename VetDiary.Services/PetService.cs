@@ -182,7 +182,7 @@ namespace VetDiary.Services
 
             if (pet == null)
             {
-                throw new ArgumentException("Breed not found.");
+                throw new ArgumentException("Pet not found.");
             }
             IEnumerable<ClientIndexViewModel> clients = await _context.Clients
                         .Select(c => new ClientIndexViewModel
@@ -204,10 +204,10 @@ namespace VetDiary.Services
              .ToListAsync();
 
             IEnumerable<BreedIndexViewModel> breeds = await _context.Breeds
-             .Select(s => new BreedIndexViewModel
+             .Select(b => new BreedIndexViewModel
              {
-                 Id = s.Id,
-                 Name = s.Name
+                 Id = b.Id,
+                 Name = b.Name
              })
              .ToListAsync();
 
@@ -231,10 +231,10 @@ namespace VetDiary.Services
 
         public async Task EditPetAsync(PetEditViewModel model)
         {
-            var pet = await _context.Pets.FirstOrDefaultAsync(b => b.Id == model.Id);
+            var pet = await _context.Pets.FirstOrDefaultAsync(p => p.Id == model.Id);
             if (pet == null)
             {
-                throw new ArgumentException("Breed not found.");
+                throw new ArgumentException("Pet not found.");
             }
             pet.Name = model.Name;
             pet.Gender = model.Gender;
@@ -290,8 +290,6 @@ namespace VetDiary.Services
             _context.Pets.Remove(pet);
             await _context.SaveChangesAsync();
         }
-
-
 
     }
 }

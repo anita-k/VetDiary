@@ -23,6 +23,14 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Species.Name)
         </dd>
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Wait!</strong> @ViewBag.ErrorMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
     </dl>
     
     <form asp-action="Delete">

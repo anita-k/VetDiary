@@ -3,23 +3,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VetDiary.Data;
 using VetDiary.Data.Models;
+using VetDiary.Services;
+using VetDiary.Services.Interfaces;
+using VetDiary.ViewModels.DiaryEntry;
+using VetDiary.ViewModels.Pet;
 
 namespace VetDiary.Controllers
 {
     public class DiaryEntriesController : BaseController
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDiaryEntriesService _diaryEntryService;
 
-        public DiaryEntriesController(ApplicationDbContext context)
+        public DiaryEntriesController(IDiaryEntriesService diaryentryService)
         {
-            _context = context;
+            _diaryEntryService = diaryentryService;
         }
 
         // GET: DiaryEntries
         [AllowAnonymous]
         public async Task<IActionResult> Index()
-        {
-            return View(await _context.DiaryEntries.ToListAsync());
+        {            
+            var diaryEntries = await _diaryEntryService.GetAllDiaryEntriesAsync();
+            return View(diaryEntries);
         }
 
         // GET: DiaryEntries/Details/5
@@ -30,36 +35,38 @@ namespace VetDiary.Controllers
             {
                 return NotFound();
             }
-
-            var diaryEntry = await _context.DiaryEntries
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (diaryEntry == null)
+            try
+            {
+                var diaryEntry = await _diaryEntryService.GetDiaryEntryDetailsByIdAsync((int)id);
+                return View(diaryEntry);
+            }
+            catch (ArgumentException)
             {
                 return NotFound();
             }
-
-            return View(diaryEntry);
         }
 
         // GET: DiaryEntries/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create(int? clientId)
         {
-            return View();
+            var diaryEntry = await _diaryEntryService.GetDiaryEntryCreateViewModelAsync();
+            return View(diaryEntry);
         }
 
         // POST: DiaryEntries/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PetId,VisitDate,VisitReasonId,Description,Weight,Temperature,Pulse,Behaviour,BodyConditionScore")] DiaryEntry diaryEntry)
+        public async Task<IActionResult> Create(DiaryEntryCreateViewModel diaryEntry)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(diaryEntry);
-                await _context.SaveChangesAsync();
+                await _diaryEntryService.AddDiaryEntryAsync(diaryEntry);
+
                 return RedirectToAction(nameof(Index));
             }
+            var model = await _diaryEntryService.GetDiaryEntryCreateViewModelAsync();
+            diaryEntry.Pets = model.Pets;
+            diaryEntry.VisitReasons = model.VisitReasons;
             return View(diaryEntry);
         }
 
@@ -70,8 +77,7 @@ namespace VetDiary.Controllers
             {
                 return NotFound();
             }
-
-            var diaryEntry = await _context.DiaryEntries.FindAsync(id);
+            var diaryEntry = await _diaryEntryService.GetDiaryEntryForEditAsync((int)id);
             if (diaryEntry == null)
             {
                 return NotFound();
@@ -80,35 +86,13 @@ namespace VetDiary.Controllers
         }
 
         // POST: DiaryEntries/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,PetId,VisitDate,VisitReasonId,Description,Weight,Temperature,Pulse,Behaviour,BodyConditionScore")] DiaryEntry diaryEntry)
+        public async Task<IActionResult> Edit(DiaryEntryEditViewModel diaryEntry)
         {
-            if (id != diaryEntry.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(diaryEntry);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DiaryEntryExists(diaryEntry.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _diaryEntryService.EditDiaryEntryAsync(diaryEntry);
                 return RedirectToAction(nameof(Index));
             }
             return View(diaryEntry);
@@ -121,15 +105,13 @@ namespace VetDiary.Controllers
             {
                 return NotFound();
             }
-
-            var diaryEntry = await _context.DiaryEntries
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (diaryEntry == null)
+            var breed = await _diaryEntryService.GetDiaryEntryDeleteDetailsAsync((int)id);
+            if (breed == null)
             {
                 return NotFound();
             }
 
-            return View(diaryEntry);
+            return View(breed);
         }
 
         // POST: DiaryEntries/Delete/5
@@ -137,19 +119,9 @@ namespace VetDiary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var diaryEntry = await _context.DiaryEntries.FindAsync(id);
-            if (diaryEntry != null)
-            {
-                _context.DiaryEntries.Remove(diaryEntry);
-            }
-
-            await _context.SaveChangesAsync();
+            await _diaryEntryService.DeleteDiaryEntryAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool DiaryEntryExists(int id)
-        {
-            return _context.DiaryEntries.Any(e => e.Id == id);
-        }
     }
 }

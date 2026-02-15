@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using VetDiary.Data;
 using VetDiary.Data.Models;
@@ -109,13 +110,13 @@ namespace VetDiary.Controllers
             {
                 return NotFound();
             }
-            var breed = await _petsService.GetPetDeleteDetailsAsync((int)id);
-            if (breed == null)
+            var pet = await _petsService.GetPetDeleteDetailsAsync((int)id);
+            if (pet == null)
             {
                 return NotFound();
             }
 
-            return View(breed);
+            return View(pet);
         }
 
         // POST: Pets/Delete/5
@@ -123,8 +124,32 @@ namespace VetDiary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _petsService.DeletePetAsync(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _petsService.DeletePetAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                // Check if the inner exception is a SqlException and look for the Conflict error code
+                if (ex.InnerException is SqlException sqlEx && (sqlEx.Number == 547))
+                {
+                    ModelState.AddModelError(string.Empty, "");
+
+                    // Return to the view with the error message
+                    var pet = await _petsService.GetPetDeleteDetailsAsync((int)id);
+                    if (pet == null)
+                    {
+                        return NotFound();
+                    }
+                    ViewBag.ErrorMessage = "You cannot delete this pet because it has related diary entries. Please delete the entries first.";
+                    return View(pet);
+                }
+
+                // If it's some other error, re-throw or handle generally
+                throw;
+            }
+
         }
 
     }

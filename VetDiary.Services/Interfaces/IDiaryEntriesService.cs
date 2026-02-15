@@ -4,7 +4,7 @@ namespace VetDiary.Services.Interfaces
 {
     public interface IDiaryEntriesService
     {
-        Task<IEnumerable<DiaryEntryIndexViewModel>> GetAllDiaryEntryAsync();
+        Task<IEnumerable<DiaryEntryIndexViewModel>> GetAllDiaryEntriesAsync();
 
         Task<DiaryEntryDetailsViewModel> GetDiaryEntryDetailsByIdAsync(int id);
 

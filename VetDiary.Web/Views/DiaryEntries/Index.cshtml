@@ -1,4 +1,4 @@
-﻿@model IEnumerable<VetDiary.Data.Models.DiaryEntry>
+﻿@model IEnumerable<VetDiary.ViewModels.DiaryEntry.DiaryEntryIndexViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -16,25 +16,13 @@
                 @Html.DisplayNameFor(model => model.VisitDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.VisitReasonId)
+                @Html.DisplayNameFor(model => model.Pet)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                @Html.DisplayNameFor(model => model.Pet.Client)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Weight)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Temperature)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Pulse)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Behaviour)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BodyConditionScore)
+                @Html.DisplayNameFor(model => model.VisitReason)
             </th>
             <th></th>
         </tr>
@@ -43,29 +31,24 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.VisitDate)
+                <a asp-action="Details" asp-route-id="@item.Id">
+                    @Html.DisplayFor(modelItem => item.VisitDate)
+                </a>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.VisitReasonId)
+                <a asp-controller="Pets" asp-action="Details" asp-route-id="@item.Pet.Id">
+                        @Html.DisplayFor(modelItem => item.Pet.Name)
+                </a>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
+                <a asp-controller="Clients" asp-action="Details" asp-route-id="@item.Pet.Client.Id">
+                    @Html.DisplayFor(modelItem => item.Pet.Client.FullName)
+                </a>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Weight)
+                @Html.DisplayFor(modelItem => item.VisitReason.Name)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Temperature)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pulse)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Behaviour)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BodyConditionScore)
-            </td>
+
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
