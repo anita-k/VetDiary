@@ -3,8 +3,13 @@
 @{
     ViewData["Title"] = "Details";
 }
-
-<h1>Client Details</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Client Details: @Html.DisplayFor(model => model.FullName)</h1>
+        </div>
+    </div>
+</div>
 
 <div class="container">
     <div class="row">
@@ -85,8 +90,7 @@
                                     </td>
                                     <td>
                                         <a asp-controller="Pets" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                                        <a asp-controller="Pets" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                                        <a asp-controller="Pets" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                        <a asp-controller="Pets" asp-action="Details" asp-route-id="@item.Id">Details</a>
                                     </td>
                                 </tr>
                             }

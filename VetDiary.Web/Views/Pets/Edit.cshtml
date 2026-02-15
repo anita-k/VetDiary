@@ -63,12 +63,22 @@
                 <select asp-for="ClientId" class="form-control" asp-items="@(new SelectList(Model.Clients, "Id", "FullName"))"></select>
             </div>
             <div class="form-group">
-                <label asp-for="SpeciesId" class="control-label"></label>
-                <select asp-for="SpeciesId" class="form-control" asp-items="@(new SelectList(Model.Species, "Id", "Name"))"></select>
+                <label asp-for="SpeciesId"></label>
+                <select asp-for="SpeciesId"
+                        id="speciesSelect"
+                        class="form-control"
+                        asp-items="@(new SelectList(Model.Species, "Id", "Name"))">
+                    <option value="">-- Select Species --</option>
+                </select>
             </div>
             <div class="form-group">
-                <label asp-for="BreedId" class="control-label"></label>
-                <select asp-for="BreedId" class="form-control" asp-items="@(new SelectList(Model.Breeds, "Id", "Name"))"></select>
+                <label asp-for="BreedId"></label>
+                <select asp-for="BreedId"
+                        id="breedSelect"
+                        class="form-control"
+                        disabled>
+                    <option value="">-- Select Breed --</option>
+                </select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -80,4 +90,46 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+@section Scripts {
+    <script>
+        const speciesSelect = document.getElementById("speciesSelect");
+        const breedSelect = document.getElementById("breedSelect");
+
+        speciesSelect.addEventListener("change", function () {
+            const speciesId = this.value;
+
+            // reset
+            breedSelect.innerHTML = '<option value="">-- Select Breed --</option>';
+            breedSelect.disabled = true;
+
+            if (!speciesId) return;
+
+            fetch(`/Breeds/GetBreedsBySpecies?speciesId=${speciesId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.result.length === 0) {
+                        breedSelect.disabled = true;
+                        return;
+                    }
+
+                    data.result.forEach(b => {
+                        const option = document.createElement("option");
+                        option.value = b.id;
+                        option.text = b.name;
+                        breedSelect.appendChild(option);
+                    });
+
+                    breedSelect.disabled = false;
+                });
+        });
+
+        window.addEventListener("load", () => {
+            if (speciesSelect.value) {
+                speciesSelect.dispatchEvent(new Event("change"));
+            }
+        });
+
+    </script>
+}
 
