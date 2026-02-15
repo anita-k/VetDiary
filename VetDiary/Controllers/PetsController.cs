@@ -1,27 +1,32 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Microsoft.EntityFrameworkCore;
 using VetDiary.Data;
 using VetDiary.Data.Models;
+using VetDiary.Services;
+using VetDiary.Services.Interfaces;
+using VetDiary.ViewModels.Breed;
+using VetDiary.ViewModels.Pet;
 
 namespace VetDiary.Controllers
 {
     public class PetsController : BaseController
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IPetsService _petsService;
 
-        public PetsController(ApplicationDbContext context)
+        public PetsController(IPetsService petsService)
         {
-            _context = context;
+            _petsService = petsService;
         }
 
         // GET: Pets
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Pets.Include(p => p.Breed).Include(p => p.Client).Include(p => p.Species);
-            return View(await applicationDbContext.ToListAsync());
+            var pets = await _petsService.GetAllPetsAsync();
+            return View(pets);
         }
 
         // GET: Pets/Details/5
@@ -32,46 +37,40 @@ namespace VetDiary.Controllers
             {
                 return NotFound();
             }
-
-            var pet = await _context.Pets
-                .Include(p => p.Breed)
-                .Include(p => p.Client)
-                .Include(p => p.Species)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (pet == null)
+            try
+            {
+                var breed = await _petsService.GetPetDetailsByIdAsync((int)id);
+                return View(breed);
+            }
+            catch (ArgumentException)
             {
                 return NotFound();
             }
-
-            return View(pet);
         }
 
         // GET: Pets/Create
-        public IActionResult Create(int? clientId)
+        public async Task<IActionResult> Create(int? clientId)
         {            
-            ViewData["BreedId"] = new SelectList(_context.Breeds, "Id", "Name");
-            ViewData["ClientId"] = new SelectList(_context.Clients, "Id", "FullName", clientId);
-            ViewData["SpeciesId"] = new SelectList(_context.Species, "Id", "Name");
-
-            return View();
+            var pet = await _petsService.GetPetCreateViewModelAsync();
+            return View(pet);
         }
 
         // POST: Pets/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Gender,IsNeutered,BirthDate,MicrochipNumber,PassportNumber,ClientId,SpeciesId,BreedId")] Pet pet)
+        public async Task<IActionResult> Create(PetCreateViewModel pet)
         {
-            if (ModelState.IsValid)
+             if (ModelState.IsValid)
             {
-                _context.Add(pet);
-                await _context.SaveChangesAsync();
+                await _petsService.AddPetAsync(pet);
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BreedId"] = new SelectList(_context.Breeds, "Id", "Name", pet.BreedId);
-            ViewData["ClientId"] = new SelectList(_context.Clients, "Id", "FirstName", pet.ClientId);
-            ViewData["SpeciesId"] = new SelectList(_context.Species, "Id", "Name", pet.SpeciesId);
+
+            var model = await _petsService.GetPetCreateViewModelAsync();
+            pet.Clients = model.Clients;
+            pet.Species = model.Species;
+            pet.Breeds = model.Breeds;
             return View(pet);
         }
 
@@ -82,53 +81,24 @@ namespace VetDiary.Controllers
             {
                 return NotFound();
             }
-
-            var pet = await _context.Pets.FindAsync(id);
-            if (pet == null)
+            var breed = await _petsService.GetPetForEditAsync((int)id);
+            if (breed == null)
             {
                 return NotFound();
             }
-            ViewData["BreedId"] = new SelectList(_context.Breeds, "Id", "Name", pet.BreedId);
-            ViewData["ClientId"] = new SelectList(_context.Clients, "Id", "FirstName", pet.ClientId);
-            ViewData["SpeciesId"] = new SelectList(_context.Species, "Id", "Name", pet.SpeciesId);
-            return View(pet);
+            return View(breed);
         }
 
         // POST: Pets/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Gender,IsNeutered,BirthDate,MicrochipNumber,PassportNumber,ClientId,SpeciesId,BreedId")] Pet pet)
+        public async Task<IActionResult> Edit(PetEditViewModel pet)
         {
-            if (id != pet.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(pet);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PetExists(pet.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _petsService.EditPetAsync(pet);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BreedId"] = new SelectList(_context.Breeds, "Id", "Name", pet.BreedId);
-            ViewData["ClientId"] = new SelectList(_context.Clients, "Id", "FirstName", pet.ClientId);
-            ViewData["SpeciesId"] = new SelectList(_context.Species, "Id", "Name", pet.SpeciesId);
             return View(pet);
         }
 
@@ -139,18 +109,13 @@ namespace VetDiary.Controllers
             {
                 return NotFound();
             }
-
-            var pet = await _context.Pets
-                .Include(p => p.Breed)
-                .Include(p => p.Client)
-                .Include(p => p.Species)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (pet == null)
+            var breed = await _petsService.GetPetDeleteDetailsAsync((int)id);
+            if (breed == null)
             {
                 return NotFound();
             }
 
-            return View(pet);
+            return View(breed);
         }
 
         // POST: Pets/Delete/5
@@ -158,19 +123,9 @@ namespace VetDiary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var pet = await _context.Pets.FindAsync(id);
-            if (pet != null)
-            {
-                _context.Pets.Remove(pet);
-            }
-
-            await _context.SaveChangesAsync();
+            await _petsService.DeletePetAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PetExists(int id)
-        {
-            return _context.Pets.Any(e => e.Id == id);
-        }
     }
 }

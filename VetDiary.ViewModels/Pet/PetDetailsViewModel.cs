@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using VetDiary.Data.Models;
+using VetDiary.Shared;
 using VetDiary.ViewModels.Breed;
 using VetDiary.ViewModels.Client;
 using VetDiary.ViewModels.DiaryEntry;
@@ -28,16 +29,16 @@ namespace VetDiary.ViewModels.Pet
         public string? PassportNumber { get; set; } = string.Empty;
 
         public int ClientId { get; set; }
-        public ClientDetailsViewModel Client { get; set; } = null!;
+        public ClientIndexViewModel Client { get; set; } = null!;
 
         public int SpeciesId { get; set; }
-        public SpeciesDetailsViewModel Species { get; set; } = null!;
+        public SpeciesIndexViewModel Species { get; set; } = null!;
 
         [Display(Name = "Breed")]
         public int? BreedId { get; set; } = null;
-        public BreedDetailsViewModel Breed { get; set; } = null;
+        public BreedIndexViewModel? Breed { get; set; } = null;
 
-        public ICollection<DiaryEntryIndexViewModel> DiaryEntries { get; } = new List<DiaryEntryIndexViewModel>();
+        public ICollection<DiaryEntryIndexViewModel> DiaryEntries { get; set; } = new List<DiaryEntryIndexViewModel>();
 
     }
 }

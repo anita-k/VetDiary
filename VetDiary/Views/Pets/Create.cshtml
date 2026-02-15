@@ -1,4 +1,5 @@
-﻿@model VetDiary.Data.Models.Pet
+﻿@using VetDiary.Shared
+@model VetDiary.ViewModels.Pet.PetCreateViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -19,12 +20,26 @@
             </div>
             <div class="form-group">
                 <label asp-for="Gender" class="control-label"></label>
-                <input asp-for="Gender" class="form-control" />
-                <span asp-validation-for="Gender" class="text-danger"></span>
+                <select asp-for="Gender"
+                        asp-items="Html.GetEnumSelectList<PetGender>()"
+                        class="form-control">
+                    <option value="">Select gender ...</option>
+                </select>
             </div>
             <div class="form-group">
-                <label asp-for="IsNeutered" class="control-label"></label>
-                <input asp-for="IsNeutered" class="form-control" />
+                <label class="control-label">Neutered?</label>
+                <div class="form-check">
+                    <input type="radio" asp-for="IsNeutered" value="" class="form-check-input" id="neutered-unknown" />
+                    <label class="form-check-label" for="neutered-unknown">Unknown / Not specified</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" asp-for="IsNeutered" value="true" class="form-check-input" id="neutered-yes" />
+                    <label class="form-check-label" for="neutered-yes">Yes (Neutered / Spayed)</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" asp-for="IsNeutered" value="false" class="form-check-input" id="neutered-no" />
+                    <label class="form-check-label" for="neutered-no">No (Intact / Entire)</label>
+                </div>
                 <span asp-validation-for="IsNeutered" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -44,15 +59,15 @@
             </div>
             <div class="form-group">
                 <label asp-for="ClientId" class="control-label"></label>
-                <select asp-for="ClientId" class ="form-control" asp-items="ViewBag.ClientId"></select>
+                <select asp-for="ClientId" class="form-control" asp-items="@(new SelectList(Model.Clients, "Id", "FullName"))"></select>
             </div>
             <div class="form-group">
                 <label asp-for="SpeciesId" class="control-label"></label>
-                <select asp-for="SpeciesId" class ="form-control" asp-items="ViewBag.SpeciesId"></select>
+                <select asp-for="SpeciesId" class="form-control" asp-items="@(new SelectList(Model.Species, "Id", "Name"))"></select>
             </div>
             <div class="form-group">
                 <label asp-for="BreedId" class="control-label"></label>
-                <select asp-for="BreedId" class ="form-control" asp-items="ViewBag.BreedId"></select>
+                <select asp-for="BreedId" class="form-control" asp-items="@(new SelectList(Model.Breeds, "Id", "Name"))"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
+using VetDiary.Shared;
 
 namespace VetDiary.Data.Models
 {
@@ -45,9 +46,4 @@ namespace VetDiary.Data.Models
 
     }
 
-    public enum PetGender
-    { 
-        Male,
-        Female
-    } 
 }

@@ -1,5 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using VetDiary.Data.Models;
+using VetDiary.Shared;
+using VetDiary.ViewModels.Breed;
+using VetDiary.ViewModels.Client;
+using VetDiary.ViewModels.Species;
 
 namespace VetDiary.ViewModels.Pet
 {
@@ -30,6 +34,10 @@ namespace VetDiary.ViewModels.Pet
 
         [Display(Name = "Breed")]
         public int? BreedId { get; set; } = null;
+
+        public IEnumerable<ClientIndexViewModel>? Clients { get; set; }
+        public IEnumerable<SpeciesIndexViewModel>? Species { get; set; }
+        public IEnumerable<BreedIndexViewModel>? Breeds { get; set; }
 
     }
 }

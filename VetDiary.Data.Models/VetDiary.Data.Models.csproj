@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VetDiary.Shared\VetDiary.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

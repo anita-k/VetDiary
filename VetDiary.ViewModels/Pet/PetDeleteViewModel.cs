@@ -1,10 +1,14 @@
-﻿namespace VetDiary.ViewModels.Pet
+﻿using VetDiary.ViewModels.Species;
+
+namespace VetDiary.ViewModels.Pet
 {
     public class PetDeleteViewModel
     {
         public int Id { get; set; }
 
         public string Name { get; set; } = null!;
+
+        public SpeciesIndexViewModel Species { get; set; } = null!;
 
     }
 }

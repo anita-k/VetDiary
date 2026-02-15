@@ -9,7 +9,7 @@ namespace VetDiary.ViewModels.DiaryEntry
 
         public int PetId { get; set; }
 
-        public PetDetailsViewModel Pet { get; set; } = null!;
+        public PetIndexViewModel Pet { get; set; } = null!;
 
         public DateTime VisitDate { get; set; }
 

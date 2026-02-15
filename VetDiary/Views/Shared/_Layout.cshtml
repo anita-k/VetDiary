@@ -18,27 +18,31 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">🏠 Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Clients" asp-action="Index">Clients</a>
+                            <a class="nav-link text-dark" asp-controller="Clients" asp-action="Index">👥 Clients</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Pets" asp-action="Index">Pets</a>
+                            <a class="nav-link text-dark" asp-controller="Pets" asp-action="Index">🐾 Pets</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="DiaryEntries" asp-action="Index">Diary</a>
+                        <li class="nav-item me-auto">
+                            <a class="nav-link text-dark" asp-controller="DiaryEntries" asp-action="Index">🗓️ Diary</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Species" asp-action="Index">Species</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Breeds" asp-action="Index">Breeds</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="VisitReasons" asp-action="Index">Visit Reasons</a>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-secondary" href="#" id="nomDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                ⚙️ Settings
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nomDropdown">
+                                <li><a class="dropdown-item" asp-controller="VisitReasons" asp-action="Index">🏥 Visit Reasons</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="Species" asp-action="Index">🧬 Species</a></li>
+                                <li><a class="dropdown-item" asp-controller="Breeds" asp-action="Index">🏷️ Breeds</a></li>
+                            </ul>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />

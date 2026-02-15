@@ -10,12 +10,12 @@ namespace VetDiary.ViewModels.Pet
         public int Id { get; set; }
         public string Name { get; set; } = null!;
         public int ClientId { get; set; }
-        public ClientDetailsViewModel Client { get; set; } = null!;
+        public ClientIndexViewModel Client { get; set; } = null!;
         public int SpeciesId { get; set; }
-        public SpeciesDetailsViewModel Species { get; set; } = null!;
+        public SpeciesIndexViewModel Species { get; set; } = null!;
         [Display(Name = "Breed")]
         public int? BreedId { get; set; } = null;
-        public BreedDetailsViewModel Breed { get; set; } = null;
+        public BreedIndexViewModel? Breed { get; set; } = null;
 
     }
 }
