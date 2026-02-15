@@ -32,8 +32,8 @@ namespace VetDiary.Controllers
             }
             try
             {
-                var breed = await _clientsService.GetClientDetailsByIdAsync((int)id);
-                return View(breed);
+                var client = await _clientsService.GetClientDetailsByIdAsync((int)id);
+                return View(client);
             }
             catch (ArgumentException)
             {

@@ -14,6 +14,6 @@
   </Folder>
   <Folder Name="/Solution Items/Web/">
     <Project Path="VetDiary.ViewModels/VetDiary.ViewModels.csproj" Id="f99cdd0d-fb38-4556-bc39-bff3c1262116" />
-    <Project Path="VetDiary/VetDiary.Web.csproj" />
+    <Project Path="VetDiary.Web/VetDiary.Web.csproj" />
   </Folder>
 </Solution>

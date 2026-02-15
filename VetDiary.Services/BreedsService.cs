@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis.Elfie.Serialization;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using VetDiary.Data;
 using VetDiary.Data.Models;
 using VetDiary.Services.Interfaces;
@@ -28,6 +27,7 @@ namespace VetDiary.Services
                 Species = new SpeciesIndexViewModel
                 {
                     Name = b.Species.Name,
+                    Icon = b.Species.Icon,
                 }
             })
             .ToListAsync();
@@ -51,6 +51,7 @@ namespace VetDiary.Services
                 Species = new SpeciesIndexViewModel
                 {
                     Name = breed.Species.Name,
+                    Icon = breed.Species.Icon,
                 }
             };
         }
@@ -100,7 +101,8 @@ namespace VetDiary.Services
                 Species = await _context.Species.Select(s => new SpeciesIndexViewModel
                 {
                     Id = s.Id,
-                    Name = s.Name
+                    Name = s.Name,
+                    Icon = s.Icon,
                 })
                 .ToListAsync()
             };
@@ -141,7 +143,8 @@ namespace VetDiary.Services
                 Name = breed.Name,
                 Species = new SpeciesIndexViewModel
                 {
-                    Name = species.Name
+                    Name = species.Name,
+                    Icon = species.Icon,
                 }
             };
         }

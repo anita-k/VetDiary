@@ -11,6 +11,8 @@ namespace VetDiary.Data.Models
         [MaxLength(50)]
         public string Name { get; set; } = null!;
 
+        public string? Icon { get; set; }
+
         public ICollection<Breed> Breeds { get; } = new List<Breed>();
         public ICollection<Pet> Pets { get; } = new List<Pet>();
     }

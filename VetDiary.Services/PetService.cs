@@ -44,6 +44,7 @@ namespace VetDiary.Services
                 Species = new SpeciesIndexViewModel
                 {
                     Name = p.Species.Name,
+                    Icon = p.Species.Icon,
                 },
                 BreedId = p.BreedId,
                 Breed = p.Breed != null
@@ -101,6 +102,7 @@ namespace VetDiary.Services
                 Species = new SpeciesIndexViewModel
                 {
                     Name = pet.Species.Name,
+                    Icon = pet.Species.Icon,
                 },
                 BreedId = pet.BreedId,
                 Breed = pet.Breed != null

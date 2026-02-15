@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using System.Net;
 using VetDiary.Data;
 using VetDiary.Data.Models;
 using VetDiary.Services.Interfaces;
@@ -39,6 +37,9 @@ namespace VetDiary.Services
         {
             var client = await _context.Clients
                 .Include(c => c.Pets)
+                    .ThenInclude(p => p.Species)
+                .Include(c => c.Pets)
+                    .ThenInclude(p => p.Breed)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (client == null)
@@ -49,7 +50,22 @@ namespace VetDiary.Services
             var pets = client.Pets.Select(p => new PetIndexViewModel
             {
                 Id = p.Id,
-                Name = p.Name
+                Name = p.Name,
+                SpeciesId = p.SpeciesId,
+                Species = new SpeciesIndexViewModel
+                {
+                    Id = p.Species.Id,
+                    Name = p.Species.Name,
+                    Icon = p.Species.Icon,
+                },
+                BreedId = p.BreedId,
+                Breed = p.Breed != null
+                        ? new BreedIndexViewModel {
+                            Id = p.Breed.Id,
+                            Name = p.Breed.Name
+                        }
+                        : null,
+
             }).ToList();
 
             return new ClientDetailsViewModel

@@ -21,6 +21,7 @@ namespace VetDiary.Services
             {
                 Id = vr.Id,
                 Name = vr.Name,
+                Icon = vr.Icon,
             })
             .ToListAsync();
         }
@@ -39,6 +40,7 @@ namespace VetDiary.Services
             {
                 Id = Species.Id,
                 Name = Species.Name,
+                Icon = Species.Icon,
             };
         }
 
