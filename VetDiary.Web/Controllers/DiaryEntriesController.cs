@@ -47,7 +47,7 @@ namespace VetDiary.Controllers
         }
 
         // GET: DiaryEntries/Create
-        public async Task<IActionResult> Create(int? clientId)
+        public async Task<IActionResult> Create(int? petId)
         {
             var diaryEntry = await _diaryEntryService.GetDiaryEntryCreateViewModelAsync();
             return View(diaryEntry);

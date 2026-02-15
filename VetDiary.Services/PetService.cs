@@ -61,6 +61,8 @@ namespace VetDiary.Services
                 .Include(p => p.Client)
                 .Include(p => p.Species)
                 .Include(p => p.Breed)
+                .Include(p => p.DiaryEntries)
+                    .ThenInclude(d => d.VisitReason)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (pet == null)
@@ -73,12 +75,42 @@ namespace VetDiary.Services
             {
                 Id = d.Id,
                 PetId = d.PetId,
+                Pet = new PetIndexViewModel
+                {
+                    Id = pet.Id,
+                    Name = pet.Name,
+                    SpeciesId = pet.SpeciesId,
+                    Species = new SpeciesIndexViewModel
+                    {
+                        Name = pet.Species.Name,
+                        Icon = pet.Species.Icon,
+                    },
+                    BreedId = pet.BreedId,
+                    Breed = pet.Breed != null
+                        ? new BreedIndexViewModel
+                        {
+                            Name = pet.Breed.Name,
+                            SpeciesId = pet.Breed.SpeciesId
+                        }
+                        : null,
+                    ClientId = pet.ClientId,
+
+                    Client = new ClientIndexViewModel
+                    {
+                        
+                        Id = pet.Client.Id,
+                        FirstName = pet.Client.FirstName,
+                        LastName = pet.Client.LastName,
+                        Phone = pet.Client.Phone,
+                        Email = pet.Client.Email,
+                    },
+                },
                 VisitDate = d.VisitDate,
                 VisitReasonId = d.VisitReasonId,
-                    VisitReason = new VisitReasonIndexViewModel {
-                        Id = d.VisitReasonId,
-                        Name = d.VisitReason.Name,
-                    },
+                VisitReason = new VisitReasonIndexViewModel {
+                    Id = d.VisitReasonId,
+                    Name = d.VisitReason.Name,
+                },
                 });
 
             return new PetDetailsViewModel
@@ -93,6 +125,7 @@ namespace VetDiary.Services
                 ClientId = pet.ClientId,
                 Client = new ClientIndexViewModel
                 {
+                    Id = pet.ClientId,
                     FirstName = pet.Client.FirstName,
                     LastName = pet.Client.LastName,
                     Phone = pet.Client.Phone,

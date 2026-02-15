@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using VetDiary.Data.Models;
 using VetDiary.Services;
 using VetDiary.Services.Interfaces;
@@ -115,6 +116,13 @@ namespace VetDiary.Controllers
         {
             await _breedsService.DeleteBreedAsync(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public IActionResult GetBreedsBySpecies(int speciesId)
+        {
+            var breeds = _breedsService.GetBreedsBySpecies(speciesId);
+            return Json(breeds);
         }
 
     }

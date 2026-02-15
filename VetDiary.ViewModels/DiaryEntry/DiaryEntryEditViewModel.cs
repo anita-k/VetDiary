@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using VetDiary.ViewModels.Pet;
 using VetDiary.ViewModels.VisitReason;
 
@@ -9,16 +10,20 @@ namespace VetDiary.ViewModels.DiaryEntry
         public int Id { get; set; }
 
         [Required]
+        [DisplayName("Pet")]
         public int PetId { get; set; }
 
         public PetDetailsViewModel? Pet { get; set; }
 
         [Required]
+        [DisplayName("Visit Date")]
         public DateTime VisitDate { get; set; }
 
         [Required]
+        [DisplayName("Visit Reason")]
         public int VisitReasonId { get; set; }
 
+        [DisplayName("Visit Reason")]
         public VisitReasonIndexViewModel? VisitReason { get; set; }
 
         public string? Description { get; set; } = null;
@@ -34,6 +39,7 @@ namespace VetDiary.ViewModels.DiaryEntry
         public string? Behaviour { get; set; } = null;
 
         [Range(1, 9)]
+        [DisplayName("Body Condition Score")]
         public int? BodyConditionScore { get; set; } = null;
 
         public IEnumerable<PetIndexViewModel>? Pets { get; set; }

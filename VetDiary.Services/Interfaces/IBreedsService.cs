@@ -20,5 +20,7 @@ namespace VetDiary.Services.Interfaces
 
         Task DeleteBreedAsync(int id);
 
+        Task<IEnumerable<BreedIndexViewModel>> GetBreedsBySpecies(int speciesId);
+
     }
 }

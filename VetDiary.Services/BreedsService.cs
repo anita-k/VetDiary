@@ -163,6 +163,20 @@ namespace VetDiary.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<BreedIndexViewModel>> GetBreedsBySpecies(int speciesId)
+        {
+            var breeds = _context.Breeds
+                .Where(b => b.SpeciesId == speciesId)
+                .Select(b => new BreedIndexViewModel { 
+                    Id = b.Id,
+                    Name = b.Name,
+                    SpeciesId = b.SpeciesId
+                })
+                .ToList();
+
+            return breeds;
+        }
 
     }
+
 }
