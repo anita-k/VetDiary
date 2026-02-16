@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using VetDiary.Shared;
 
 namespace VetDiary.Data.Models
 {
@@ -8,11 +9,11 @@ namespace VetDiary.Data.Models
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(ValidationConstants.ClientFirstNameMaxLength)]
         public string FirstName { get; set; } = null!;
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(ValidationConstants.ClientLastNameMaxLength)]
         public string LastName { get; set; } = null!;
 
         [Display(Name = "Full Name")]
@@ -20,14 +21,14 @@ namespace VetDiary.Data.Models
 
         [Required]
         [Phone]
-        [MaxLength(30)]
+        [MaxLength(ValidationConstants.PhoneMaxLength)]
         public string Phone { get; set; } = null!;
 
-        [MaxLength(250)]
+        [MaxLength(ValidationConstants.AddressMaxLength)]
         public string? Address { get; set; }
 
         [EmailAddress]
-        [MaxLength(150)]
+        [MaxLength(ValidationConstants.EmailAddressMaxLength)]
         public string? Email { get; set; }
               
 

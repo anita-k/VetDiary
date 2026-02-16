@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using VetDiary.Shared;
 
 namespace VetDiary.Data.Models
 {
@@ -7,8 +8,8 @@ namespace VetDiary.Data.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(50)]
+        [Required]        
+        [MaxLength(ValidationConstants.VisitReasonNameMaxLength)]
         public string Name { get; set; } = null!;
 
         public ICollection<DiaryEntry> DiaryEntries { get; } = new List<DiaryEntry>();

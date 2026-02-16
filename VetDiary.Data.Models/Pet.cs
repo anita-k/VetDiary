@@ -8,9 +8,9 @@ namespace VetDiary.Data.Models
     {
         [Key]
         public int Id { get; set; }
-
+        
         [Required]
-        [MaxLength(50)]
+        [MaxLength(ValidationConstants.PetNameMaxLength)]
         public string Name { get; set; } = null!;
 
         public PetGender? Gender { get; set; } = null;
