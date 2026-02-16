@@ -90,6 +90,9 @@ namespace VetDiary.Controllers
                 await _breedsService.EditBreedAsync(breed);
                 return RedirectToAction(nameof(Index));
             }
+            var model = await _breedsService.GetBreedForEditAsync(breed.Id);
+            breed.Species = model.Species;
+            
             return View(breed);
         }
 

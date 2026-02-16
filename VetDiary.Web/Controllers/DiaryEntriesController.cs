@@ -95,6 +95,10 @@ namespace VetDiary.Controllers
                 await _diaryEntryService.EditDiaryEntryAsync(diaryEntry);
                 return RedirectToAction(nameof(Index));
             }
+            var model = await _diaryEntryService.GetDiaryEntryForEditAsync(diaryEntry.Id);
+            diaryEntry.Pets = model.Pets;
+            diaryEntry.VisitReasons = model.VisitReasons;
+
             return View(diaryEntry);
         }
 

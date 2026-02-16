@@ -82,12 +82,12 @@ namespace VetDiary.Controllers
             {
                 return NotFound();
             }
-            var breed = await _petsService.GetPetForEditAsync((int)id);
-            if (breed == null)
+            var pet = await _petsService.GetPetForEditAsync((int)id);
+            if (pet == null)
             {
                 return NotFound();
             }
-            return View(breed);
+            return View(pet);
         }
 
         // POST: Pets/Edit/5
@@ -100,6 +100,11 @@ namespace VetDiary.Controllers
                 await _petsService.EditPetAsync(pet);
                 return RedirectToAction(nameof(Index));
             }
+            var model = await _petsService.GetPetForEditAsync(pet.Id);
+            pet.Breeds = model.Breeds;
+            pet.Species = model.Species;
+            pet.Clients = model.Clients;
+
             return View(pet);
         }
 
