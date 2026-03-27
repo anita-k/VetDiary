@@ -26,8 +26,18 @@ namespace VetDiary.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(int? statusCode)
         {
+            if (statusCode == 404)
+            {
+                return View("NotFound");
+            }
+
+            if (statusCode == 500)
+            {
+                return View("InternalError");
+            }
+
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }

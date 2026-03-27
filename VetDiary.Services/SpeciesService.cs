@@ -2,6 +2,7 @@
 using VetDiary.Data;
 using VetDiary.Data.Models;
 using VetDiary.Services.Interfaces;
+using VetDiary.ViewModels;
 using VetDiary.ViewModels.Species;
 
 namespace VetDiary.Services
@@ -24,6 +25,30 @@ namespace VetDiary.Services
                 Icon = vr.Icon,
             })
             .ToListAsync();
+        }
+
+        public async Task<PaginatedList<SpeciesIndexViewModel>> GetAllSpeciesAsync(int page, int pageSize, string? searchTerm = null)
+        {
+            var query = _context.Species.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(s => s.Name.Contains(searchTerm));
+            }
+
+            var count = await query.CountAsync();
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(vr => new SpeciesIndexViewModel
+                {
+                    Id = vr.Id,
+                    Name = vr.Name,
+                    Icon = vr.Icon,
+                })
+                .ToListAsync();
+
+            return new PaginatedList<SpeciesIndexViewModel>(items, count, page, pageSize);
         }
 
         public async Task<SpeciesDetailsViewModel> GetSpeciesDetailsByIdAsync(int id)

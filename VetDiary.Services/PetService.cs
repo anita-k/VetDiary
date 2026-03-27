@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using VetDiary.Data;
 using VetDiary.Data.Models;
 using VetDiary.Services.Interfaces;
+using VetDiary.ViewModels;
 using VetDiary.ViewModels.Breed;
 using VetDiary.ViewModels.Client;
 using VetDiary.ViewModels.DiaryEntry;
@@ -52,6 +53,58 @@ namespace VetDiary.Services
                         : null,
             })
             .ToListAsync();
+        }
+
+        public async Task<PaginatedList<PetIndexViewModel>> GetAllPetsAsync(int page, int pageSize, string? searchTerm = null, int? speciesId = null)
+        {
+            var query = _context.Pets
+                .Include(p => p.Client)
+                .Include(p => p.Species)
+                .Include(p => p.Breed)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(p => p.Name.Contains(searchTerm) ||
+                    p.Client.FirstName.Contains(searchTerm) ||
+                    p.Client.LastName.Contains(searchTerm));
+            }
+
+            if (speciesId.HasValue)
+            {
+                query = query.Where(p => p.SpeciesId == speciesId.Value);
+            }
+
+            var count = await query.CountAsync();
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => new PetIndexViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    ClientId = p.ClientId,
+                    Client = new ClientIndexViewModel
+                    {
+                        FirstName = p.Client.FirstName,
+                        LastName = p.Client.LastName,
+                        Phone = p.Client.Phone,
+                        Email = p.Client.Email,
+                    },
+                    SpeciesId = p.SpeciesId,
+                    Species = new SpeciesIndexViewModel
+                    {
+                        Name = p.Species.Name,
+                        Icon = p.Species.Icon,
+                    },
+                    BreedId = p.BreedId,
+                    Breed = p.Breed != null
+                            ? new BreedIndexViewModel { Name = p.Breed.Name }
+                            : null,
+                })
+                .ToListAsync();
+
+            return new PaginatedList<PetIndexViewModel>(items, count, page, pageSize);
         }
 
 

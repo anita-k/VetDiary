@@ -1,10 +1,13 @@
-﻿using VetDiary.ViewModels.DiaryEntry;
+﻿using VetDiary.ViewModels;
+using VetDiary.ViewModels.DiaryEntry;
 
 namespace VetDiary.Services.Interfaces
 {
     public interface IDiaryEntriesService
     {
         Task<IEnumerable<DiaryEntryIndexViewModel>> GetAllDiaryEntriesAsync();
+
+        Task<PaginatedList<DiaryEntryIndexViewModel>> GetAllDiaryEntriesAsync(int page, int pageSize, string? searchTerm = null, int? visitReasonId = null);
 
         Task<DiaryEntryDetailsViewModel> GetDiaryEntryDetailsByIdAsync(int id);
 

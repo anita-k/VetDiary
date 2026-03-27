@@ -2,6 +2,7 @@
 using VetDiary.Data;
 using VetDiary.Data.Models;
 using VetDiary.Services.Interfaces;
+using VetDiary.ViewModels;
 using VetDiary.ViewModels.VisitReason;
 
 namespace VetDiary.Services
@@ -23,6 +24,29 @@ namespace VetDiary.Services
                 Name = vr.Name,
             })
             .ToListAsync();
+        }
+
+        public async Task<PaginatedList<VisitReasonIndexViewModel>> GetAllVisitReasonsAsync(int page, int pageSize, string? searchTerm = null)
+        {
+            var query = _context.VisitReasons.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(v => v.Name.Contains(searchTerm));
+            }
+
+            var count = await query.CountAsync();
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(vr => new VisitReasonIndexViewModel
+                {
+                    Id = vr.Id,
+                    Name = vr.Name,
+                })
+                .ToListAsync();
+
+            return new PaginatedList<VisitReasonIndexViewModel>(items, count, page, pageSize);
         }
 
         public async Task<VisitReasonDetailsViewModel> GetVisitReasonDetailsByIdAsync(int id)

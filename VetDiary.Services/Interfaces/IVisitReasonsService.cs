@@ -1,10 +1,13 @@
-﻿using VetDiary.ViewModels.VisitReason;
+﻿using VetDiary.ViewModels;
+using VetDiary.ViewModels.VisitReason;
 
 namespace VetDiary.Services.Interfaces
 {
     public interface IVisitReasonsService
     {
         Task<IEnumerable<VisitReasonIndexViewModel>> GetAllVisitReasonsAsync();
+
+        Task<PaginatedList<VisitReasonIndexViewModel>> GetAllVisitReasonsAsync(int page, int pageSize, string? searchTerm = null);
 
         Task<VisitReasonDetailsViewModel> GetVisitReasonDetailsByIdAsync(int id);
 

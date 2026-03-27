@@ -4,6 +4,7 @@ using System.Data;
 using VetDiary.Data;
 using VetDiary.Data.Models;
 using VetDiary.Services.Interfaces;
+using VetDiary.ViewModels;
 using VetDiary.ViewModels.Breed;
 using VetDiary.ViewModels.Client;
 using VetDiary.ViewModels.DiaryEntry;
@@ -71,6 +72,82 @@ namespace VetDiary.Services
                 },
             })
             .ToListAsync();
+        }
+
+        public async Task<PaginatedList<DiaryEntryIndexViewModel>> GetAllDiaryEntriesAsync(int page, int pageSize, string? searchTerm = null, int? visitReasonId = null)
+        {
+            var query = _context.DiaryEntries
+                .Include(d => d.Pet)
+                    .ThenInclude(p => p.Client)
+                .Include(d => d.Pet)
+                    .ThenInclude(p => p.Species)
+                .Include(d => d.Pet)
+                    .ThenInclude(p => p.Breed)
+                .Include(d => d.VisitReason)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(d =>
+                    d.Pet.Name.Contains(searchTerm) ||
+                    d.Pet.Client.FirstName.Contains(searchTerm) ||
+                    d.Pet.Client.LastName.Contains(searchTerm) ||
+                    (d.Description != null && d.Description.Contains(searchTerm)));
+            }
+
+            if (visitReasonId.HasValue)
+            {
+                query = query.Where(d => d.VisitReasonId == visitReasonId.Value);
+            }
+
+            var count = await query.CountAsync();
+            var items = await query
+                .OrderByDescending(d => d.VisitDate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(d => new DiaryEntryIndexViewModel
+                {
+                    Id = d.Id,
+                    PetId = d.PetId,
+                    Pet = new PetIndexViewModel
+                    {
+                        Id = d.PetId,
+                        Name = d.Pet.Name,
+                        ClientId = d.Pet.ClientId,
+                        Client = new ClientIndexViewModel
+                        {
+                            Id = d.Pet.Client.Id,
+                            FirstName = d.Pet.Client.FirstName,
+                            LastName = d.Pet.Client.LastName,
+                            Phone = d.Pet.Client.Phone,
+                            Email = d.Pet.Client.Email,
+                        },
+                        SpeciesId = d.Pet.SpeciesId,
+                        Species = new SpeciesIndexViewModel
+                        {
+                            Name = d.Pet.Species.Name,
+                            Icon = d.Pet.Species.Icon,
+                        },
+                        BreedId = d.Pet.BreedId,
+                        Breed = d.Pet.Breed != null
+                            ? new BreedIndexViewModel
+                            {
+                                Name = d.Pet.Breed.Name,
+                                SpeciesId = d.Pet.Breed.SpeciesId
+                            }
+                            : null,
+                    },
+                    VisitDate = d.VisitDate,
+                    VisitReasonId = d.VisitReasonId,
+                    VisitReason = new VisitReasonIndexViewModel
+                    {
+                        Id = d.VisitReasonId,
+                        Name = d.VisitReason.Name,
+                    },
+                })
+                .ToListAsync();
+
+            return new PaginatedList<DiaryEntryIndexViewModel>(items, count, page, pageSize);
         }
 
         public async Task<DiaryEntryDetailsViewModel> GetDiaryEntryDetailsByIdAsync(int id)

@@ -1,10 +1,13 @@
-﻿using VetDiary.ViewModels.Pet;
+﻿using VetDiary.ViewModels;
+using VetDiary.ViewModels.Pet;
 
 namespace VetDiary.Services.Interfaces
 {
     public interface IPetsService
     {
         Task<IEnumerable<PetIndexViewModel>> GetAllPetsAsync();
+
+        Task<PaginatedList<PetIndexViewModel>> GetAllPetsAsync(int page, int pageSize, string? searchTerm = null, int? speciesId = null);
 
         Task<PetDetailsViewModel> GetPetDetailsByIdAsync(int id);
 

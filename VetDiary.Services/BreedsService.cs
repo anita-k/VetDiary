@@ -2,6 +2,7 @@
 using VetDiary.Data;
 using VetDiary.Data.Models;
 using VetDiary.Services.Interfaces;
+using VetDiary.ViewModels;
 using VetDiary.ViewModels.Breed;
 using VetDiary.ViewModels.Species;
 
@@ -31,6 +32,36 @@ namespace VetDiary.Services
                 }
             })
             .ToListAsync();
+        }
+
+        public async Task<PaginatedList<BreedIndexViewModel>> GetAllBreedsAsync(int page, int pageSize, string? searchTerm = null)
+        {
+            var query = _context.Breeds
+                .Include(b => b.Species)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(b => b.Name.Contains(searchTerm));
+            }
+
+            var count = await query.CountAsync();
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(b => new BreedIndexViewModel
+                {
+                    Id = b.Id,
+                    Name = b.Name,
+                    Species = new SpeciesIndexViewModel
+                    {
+                        Name = b.Species.Name,
+                        Icon = b.Species.Icon,
+                    }
+                })
+                .ToListAsync();
+
+            return new PaginatedList<BreedIndexViewModel>(items, count, page, pageSize);
         }
 
         public async Task<BreedDetailsViewModel> GetBreedDetailsByIdAsync(int id)

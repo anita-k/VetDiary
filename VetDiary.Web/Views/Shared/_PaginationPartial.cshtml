@@ -1,0 +1,31 @@
+@model dynamic
+
+@{
+    int pageIndex = (int)ViewBag.PageIndex;
+    int totalPages = (int)ViewBag.TotalPages;
+    bool hasPreviousPage = (bool)ViewBag.HasPreviousPage;
+    bool hasNextPage = (bool)ViewBag.HasNextPage;
+    string? searchTerm = ViewBag.SearchTerm as string;
+}
+
+@if (totalPages > 1)
+{
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mt-3">
+            <li class="page-item @(hasPreviousPage ? "" : "disabled")">
+                <a class="page-link" asp-route-page="@(pageIndex - 1)" asp-route-searchTerm="@searchTerm">Previous</a>
+            </li>
+
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == pageIndex ? "active" : "")">
+                    <a class="page-link" asp-route-page="@i" asp-route-searchTerm="@searchTerm">@i</a>
+                </li>
+            }
+
+            <li class="page-item @(hasNextPage ? "" : "disabled")">
+                <a class="page-link" asp-route-page="@(pageIndex + 1)" asp-route-searchTerm="@searchTerm">Next</a>
+            </li>
+        </ul>
+    </nav>
+}

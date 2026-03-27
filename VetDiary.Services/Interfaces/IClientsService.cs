@@ -1,10 +1,13 @@
-﻿using VetDiary.ViewModels.Client;
+﻿using VetDiary.ViewModels;
+using VetDiary.ViewModels.Client;
 
 namespace VetDiary.Services.Interfaces
 {
     public interface IClientsService
     {
         Task<IEnumerable<ClientIndexViewModel>> GetAllClientsAsync();
+
+        Task<PaginatedList<ClientIndexViewModel>> GetAllClientsAsync(int page, int pageSize, string? searchTerm = null);
 
         Task<ClientDetailsViewModel> GetClientDetailsByIdAsync(int id);
 

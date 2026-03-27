@@ -1,10 +1,13 @@
-﻿using VetDiary.ViewModels.Breed;
+﻿using VetDiary.ViewModels;
+using VetDiary.ViewModels.Breed;
 
 namespace VetDiary.Services.Interfaces
 {
     public interface IBreedsService
     {
         Task<IEnumerable<BreedIndexViewModel>> GetAllBreedsAsync();
+
+        Task<PaginatedList<BreedIndexViewModel>> GetAllBreedsAsync(int page, int pageSize, string? searchTerm = null);
 
         Task<BreedDetailsViewModel> GetBreedDetailsByIdAsync(int id);
 

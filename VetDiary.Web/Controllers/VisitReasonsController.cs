@@ -18,10 +18,16 @@ namespace VetDiary.Controllers
 
         // GET: VisitReasons
         [AllowAnonymous]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, string? searchTerm = null)
         {
-            var visitReasons = await _visitReasonsService.GetAllVisitReasonsAsync();
-            return View(visitReasons);
+            const int pageSize = 10;
+            var visitReasons = await _visitReasonsService.GetAllVisitReasonsAsync(page, pageSize, searchTerm);
+            ViewBag.PageIndex = visitReasons.PageIndex;
+            ViewBag.TotalPages = visitReasons.TotalPages;
+            ViewBag.HasPreviousPage = visitReasons.HasPreviousPage;
+            ViewBag.HasNextPage = visitReasons.HasNextPage;
+            ViewBag.SearchTerm = searchTerm;
+            return View(visitReasons.Items);
         }
 
         // GET: VisitReasons/Details/5

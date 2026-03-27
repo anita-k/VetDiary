@@ -2,6 +2,7 @@
 using VetDiary.Data;
 using VetDiary.Data.Models;
 using VetDiary.Services.Interfaces;
+using VetDiary.ViewModels;
 using VetDiary.ViewModels.Breed;
 using VetDiary.ViewModels.Client;
 using VetDiary.ViewModels.Pet;
@@ -31,6 +32,36 @@ namespace VetDiary.Services
                     Email = c.Email,
                 })
             .ToListAsync();
+        }
+
+        public async Task<PaginatedList<ClientIndexViewModel>> GetAllClientsAsync(int page, int pageSize, string? searchTerm = null)
+        {
+            var query = _context.Clients.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(c =>
+                    c.FirstName.Contains(searchTerm) ||
+                    c.LastName.Contains(searchTerm) ||
+                    c.Phone.Contains(searchTerm) ||
+                    (c.Email != null && c.Email.Contains(searchTerm)));
+            }
+
+            var count = await query.CountAsync();
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(c => new ClientIndexViewModel
+                {
+                    Id = c.Id,
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                    Phone = c.Phone,
+                    Email = c.Email,
+                })
+                .ToListAsync();
+
+            return new PaginatedList<ClientIndexViewModel>(items, count, page, pageSize);
         }
 
         public async Task<ClientDetailsViewModel> GetClientDetailsByIdAsync(int id)
