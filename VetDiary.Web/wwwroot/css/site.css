@@ -168,3 +168,22 @@ footer {
 .vet-features .card-title {
     color: var(--vet-primary);
 }
+
+/* Pagination */
+.page-link {
+    color: var(--vet-primary);
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+}
+
+.page-item.active .page-link {
+    color: #fff;
+    background-color: var(--vet-primary);
+    border-color: var(--vet-primary);
+}
+
+.page-link:hover {
+    color: var(--vet-primary);
+    border-color: #dee2e6;
+}
+
