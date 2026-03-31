@@ -187,3 +187,6 @@ footer {
     border-color: #dee2e6;
 }
 
+.text-dark {
+    color: var(--vet-primary);  
+}
