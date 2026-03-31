@@ -1,4 +1,5 @@
-﻿using VetDiary.ViewModels.Pet;
+﻿using System.ComponentModel.DataAnnotations;
+using VetDiary.ViewModels.Pet;
 using VetDiary.ViewModels.VisitReason;
 
 namespace VetDiary.ViewModels.DiaryEntry
@@ -11,10 +12,12 @@ namespace VetDiary.ViewModels.DiaryEntry
 
         public PetIndexViewModel Pet { get; set; } = null!;
 
+        [Display(Name = "Visit Date")]
         public DateTime VisitDate { get; set; }
 
         public int VisitReasonId { get; set; }
 
+        [Display(Name = "Visit Reason")]
         public VisitReasonIndexViewModel VisitReason { get; set; } = null!;
 
     }

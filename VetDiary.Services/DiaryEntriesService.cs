@@ -92,6 +92,7 @@ namespace VetDiary.Services
                     d.Pet.Name.Contains(searchTerm) ||
                     d.Pet.Client.FirstName.Contains(searchTerm) ||
                     d.Pet.Client.LastName.Contains(searchTerm) ||
+                    d.VisitReason.Name.Contains(searchTerm) ||
                     (d.Description != null && d.Description.Contains(searchTerm)));
             }
 
