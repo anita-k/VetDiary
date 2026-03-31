@@ -1,0 +1,49 @@
+@model IEnumerable<VetDiary.Web.Areas.Admin.Controllers.UserViewModel>
+
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<h1>User Management</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>
+                    @foreach (var role in user.Roles)
+                    {
+                        <span class="badge @(role == "Administrator" ? "bg-danger" : "bg-secondary")">@role</span>
+                    }
+                    @if (!user.Roles.Any())
+                    {
+                        <span class="badge bg-light text-dark">No roles</span>
+                    }
+                </td>
+                <td>
+                    @if (!user.Roles.Contains("Administrator"))
+                    {
+                        <form asp-action="PromoteToAdmin" asp-route-id="@user.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-outline-success">Promote to Admin</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="DemoteFromAdmin" asp-route-id="@user.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-outline-warning">Remove Admin</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
