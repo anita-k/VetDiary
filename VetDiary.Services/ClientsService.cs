@@ -44,6 +44,7 @@ namespace VetDiary.Services
                     c.FirstName.Contains(searchTerm) ||
                     c.LastName.Contains(searchTerm) ||
                     c.Phone.Contains(searchTerm) ||
+                    c.Address.Contains(searchTerm) ||
                     (c.Email != null && c.Email.Contains(searchTerm)));
             }
 
