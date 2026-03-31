@@ -4,11 +4,25 @@
     ViewData["Title"] = "Pets";
 }
 
-<h1>Pets</h1>
+    <h1>Pets</h1>
 
-<p>
-    <a class="btn btn-primary" asp-action="Create">Create New</a>
-</p>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <a class="btn btn-primary" asp-action="Create">Create New</a>
+        </div>
+        <div class="col-md-8">
+            <form method="get" class="d-flex">
+                <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" class="form-control me-2" 
+                placeholder="Search by pet or owner name, microchip or passport number" />
+                <button type="submit" class="btn btn-outline-secondary">Search</button>
+                @if (!string.IsNullOrEmpty(ViewBag.SearchTerm as string) || ViewBag.SpeciesId != null)
+                {
+                    <a asp-action="Index" class="btn btn-outline-danger ms-1">Clear</a>
+                }
+            </form>
+        </div>
+    </div>
+
 <table class="table">
     <thead>
         <tr>

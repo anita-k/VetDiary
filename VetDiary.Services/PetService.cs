@@ -65,7 +65,10 @@ namespace VetDiary.Services
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-                query = query.Where(p => p.Name.Contains(searchTerm) ||
+                query = query.Where(
+                    p => p.Name.Contains(searchTerm) ||
+                    p.MicrochipNumber.Equals(searchTerm) ||
+                    p.PassportNumber.Contains(searchTerm) ||
                     p.Client.FirstName.Contains(searchTerm) ||
                     p.Client.LastName.Contains(searchTerm));
             }
