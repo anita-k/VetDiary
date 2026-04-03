@@ -16,4 +16,5 @@
     <Project Path="VetDiary.ViewModels/VetDiary.ViewModels.csproj" Id="f99cdd0d-fb38-4556-bc39-bff3c1262116" />
     <Project Path="VetDiary.Web/VetDiary.Web.csproj" />
   </Folder>
+  <Project Path="VetDiary.Services.Tests/VetDiary.Services.Tests.csproj" />
 </Solution>
