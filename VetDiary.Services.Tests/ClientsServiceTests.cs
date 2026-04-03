@@ -140,6 +140,149 @@ namespace VetDiary.Services.Tests
             Assert.Equal("1234567890", client.Phone);
             Assert.Equal("john@abc.com", client.Email);
             Assert.Equal("123 Main St", client.Address);
-        }        
+        }
+
+        [Fact]
+        public async Task GetClientForEditAsync_ReturnsEditViewModel()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var client = new Client { FirstName = "John", LastName = "Doe", Phone = "1234567890", Email = "john@test.com", Address = "Add" };
+            context.Clients.Add(client);
+            await context.SaveChangesAsync();
+            var service = new ClientsService(context);
+
+            // Act
+            var result = await service.GetClientForEditAsync(client.Id);
+
+            // Assert
+            Assert.Equal(client.Id, result.Id);
+            Assert.Equal("John", result.FirstName);
+            Assert.Equal("Doe", result.LastName);
+            Assert.Equal("1234567890", result.Phone);
+            Assert.Equal("john@test.com", result.Email);
+            Assert.Equal("Add", result.Address);
+        }
+
+        [Fact]
+        public async Task GetClientForEditAsync_ThrowsForNonExistentClient()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var service = new ClientsService(context);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(
+                () => service.GetClientForEditAsync(999));
+        }
+
+        [Fact]
+        public async Task EditClientAsync_UpdatesClientData()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var client = new Client { FirstName = "John", LastName = "Doe", Phone = "1234567890" };
+            context.Clients.Add(client);
+            await context.SaveChangesAsync();
+            var service = new ClientsService(context);
+
+            var editModel = new ClientEditViewModel
+            {
+                Id = client.Id,
+                FirstName = "Updated",
+                LastName = "Name",
+                Phone = "9999999999",
+                Email = "updated@test.com",
+                Address = "New Address"
+            };
+
+            // Act
+            await service.EditClientAsync(editModel);
+
+            // Assert
+            var updated = context.Clients.First();
+            Assert.Equal("Updated", updated.FirstName);
+            Assert.Equal("Name", updated.LastName);
+            Assert.Equal("9999999999", updated.Phone);
+            Assert.Equal("updated@test.com", updated.Email);
+            Assert.Equal("New Address", updated.Address);
+        }
+
+        [Fact]
+        public async Task EditClientAsync_ThrowsForNonExistentClient()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var service = new ClientsService(context);
+            var editModel = new ClientEditViewModel
+            {
+                Id = 999,
+                FirstName = "X",
+                LastName = "Y",
+                Phone = "0000000000"
+            };
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(
+                () => service.EditClientAsync(editModel));
+        }
+
+        [Fact]
+        public async Task DeleteClientAsync_RemovesClient()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var client = new Client { FirstName = "John", LastName = "Doe", Phone = "1234567890" };
+            context.Clients.Add(client);
+            await context.SaveChangesAsync();
+            var service = new ClientsService(context);
+
+            // Act
+            await service.DeleteClientAsync(client.Id);
+
+            // Assert
+            Assert.Empty(context.Clients);
+        }
+
+        [Fact]
+        public async Task DeleteClientAsync_ThrowsForNonExistentClient()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var service = new ClientsService(context);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(
+                () => service.DeleteClientAsync(999));
+        }
+
+        [Fact]
+        public async Task GetClientDeleteDetailsAsync_ReturnsCorrectData()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var species = new Species { Name = "Cat" };
+            context.Species.Add(species);
+            await context.SaveChangesAsync();
+
+            var client = new Client { FirstName = "John", LastName = "Doe", Phone = "1234567890", Address = "Add", Email = "e@e.com" };
+            context.Clients.Add(client);
+            await context.SaveChangesAsync();
+
+            context.Pets.Add(new Pet { Name = "Whiskers", ClientId = client.Id, SpeciesId = species.Id });
+            await context.SaveChangesAsync();
+
+            var service = new ClientsService(context);
+
+            // Act
+            var result = await service.GetClientDeleteDetailsAsync(client.Id);
+
+            // Assert
+            Assert.Equal(client.Id, result.Id);
+            Assert.Equal("John", result.FirstName);
+            Assert.Equal("Doe", result.LastName);
+            Assert.Single(result.Pets);
+            Assert.Equal("Whiskers", result.Pets.First().Name);
+        }
     }
 }
