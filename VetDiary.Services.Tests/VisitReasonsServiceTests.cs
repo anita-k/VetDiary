@@ -111,5 +111,70 @@ namespace VetDiary.Services.Tests
             Assert.Equal(1, context.VisitReasons.Count());
             Assert.Equal("Emergency", context.VisitReasons.First().Name);
         }
+
+        [Fact]
+        public async Task GetVisitReasonForEditAsync_ReturnsEditModel()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var visitReason = new VisitReason { Name = "Checkup" };
+            context.VisitReasons.Add(visitReason);
+            await context.SaveChangesAsync();
+            var service = new VisitReasonsService(context);
+
+            // Act
+            var result = await service.GetVisitReasonForEditAsync(visitReason.Id);
+
+            // Assert
+            Assert.Equal("Checkup", result.Name);
+        }
+
+        [Fact]
+        public async Task GetVisitReasonForEditAsync_ThrowsForNonExistent()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var service = new VisitReasonsService(context);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(
+                () => service.GetVisitReasonForEditAsync(999));
+        }
+
+        [Fact]
+        public async Task EditVisitReasonAsync_UpdatesVisitReason()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var visitReason = new VisitReason { Name = "Checkup" };
+            context.VisitReasons.Add(visitReason);
+            await context.SaveChangesAsync();
+            var service = new VisitReasonsService(context);
+
+            var editModel = new VisitReasonEditViewModel
+            {
+                Id = visitReason.Id,
+                Name = "Updated Checkup"
+            };
+
+            // Act
+            await service.EditVisitReasonAsync(editModel);
+
+            // Assert
+            Assert.Equal("Updated Checkup", context.VisitReasons.First().Name);
+        }
+
+        [Fact]
+        public async Task EditVisitReasonAsync_ThrowsForNonExistent()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var service = new VisitReasonsService(context);
+            var editModel = new VisitReasonEditViewModel { Id = 999, Name = "X" };
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(
+                () => service.EditVisitReasonAsync(editModel));
+        }
     }
 }
