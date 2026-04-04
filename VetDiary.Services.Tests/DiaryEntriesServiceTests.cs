@@ -290,6 +290,152 @@ namespace VetDiary.Services.Tests
             // Act & Assert
             await Assert.ThrowsAsync<InvalidOperationException>(
                 () => service.GetDiaryEntryForEditAsync(999));
+        }   
+
+     [Fact]
+        public async Task EditDiaryEntryAsync_UpdatesEntry()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            // First three variables are discarded with _ to avoid unused variable warnings
+            var (_, _, _, pet, visitReason) = SeedFullData(context);
+
+            var entry = new DiaryEntry
+            {
+                PetId = pet.Id,
+                VisitDate = DateTime.Now,
+                VisitReasonId = visitReason.Id,
+                Description = "Original"
+            };
+            context.DiaryEntries.Add(entry);
+            await context.SaveChangesAsync();
+            var service = new DiaryEntriesService(context);
+
+            var editModel = new DiaryEntryEditViewModel
+            {
+                Id = entry.Id,
+                PetId = pet.Id,
+                VisitDate = new DateTime(2025, 8, 1),
+                VisitReasonId = visitReason.Id,
+                Description = "Updated description",
+                Weight = 28.0f,
+                Temperature = 38.8f,
+                Pulse = 85,
+                Behaviour = "Energetic",
+                BodyConditionScore = 7
+            };
+
+            // Act
+            await service.EditDiaryEntryAsync(editModel);
+
+            // Assert
+            var updated = context.DiaryEntries.First();
+            Assert.Equal("Updated description", updated.Description);
+            Assert.Equal(28.0f, updated.Weight);
+            Assert.Equal(38.8f, updated.Temperature);
+            Assert.Equal(85, updated.Pulse);
+            Assert.Equal("Energetic", updated.Behaviour);
+            Assert.Equal(7, updated.BodyConditionScore);
+        }
+
+        [Fact]
+        public async Task EditDiaryEntryAsync_ThrowsForNonExistent()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var service = new DiaryEntriesService(context);
+            var editModel = new DiaryEntryEditViewModel
+            {
+                Id = 999,
+                PetId = 1,
+                VisitDate = DateTime.Now,
+                VisitReasonId = 1
+            };
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(
+                () => service.EditDiaryEntryAsync(editModel));
+        }
+
+        [Fact]
+        public async Task DeleteDiaryEntryAsync_RemovesEntry()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            // First three variables are discarded with _ to avoid unused variable warnings
+            var (_, _, _, pet, visitReason) = SeedFullData(context);
+
+            var entry = new DiaryEntry
+            {
+                PetId = pet.Id,
+                VisitDate = DateTime.Now,
+                VisitReasonId = visitReason.Id
+            };
+            context.DiaryEntries.Add(entry);
+            await context.SaveChangesAsync();
+            var service = new DiaryEntriesService(context);
+
+            // Act
+            await service.DeleteDiaryEntryAsync(entry.Id);
+
+            // Assert
+            Assert.Empty(context.DiaryEntries);
+        }
+
+        [Fact]
+        public async Task DeleteDiaryEntryAsync_ThrowsForNonExistent()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var service = new DiaryEntriesService(context);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(
+                () => service.DeleteDiaryEntryAsync(999));
+        }
+
+        [Fact]
+        public async Task GetDiaryEntryDeleteDetailsAsync_ReturnsDetails()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            // First three variables are discarded with _ to avoid unused variable warnings
+            var (_, _, _, pet, visitReason) = SeedFullData(context);
+
+            var entry = new DiaryEntry
+            {
+                PetId = pet.Id,
+                VisitDate = new DateTime(2025, 6, 15),
+                VisitReasonId = visitReason.Id,
+                Description = "To be deleted"
+            };
+            context.DiaryEntries.Add(entry);
+            await context.SaveChangesAsync();
+            var service = new DiaryEntriesService(context);
+
+            // Act
+            var result = await service.GetDiaryEntryDeleteDetailsAsync(entry.Id);
+
+            // Assert
+            Assert.Equal(entry.Id, result.Id);
+            Assert.Equal(pet.Id, result.PetId);
+            Assert.NotNull(result.Pet);
+            Assert.Equal("Buddy", result.Pet.Name);
+            Assert.NotNull(result.VisitReason);
+            Assert.Equal("Checkup", result.VisitReason.Name);
+            Assert.Equal("To be deleted", result.Description);
+        }
+
+        [Fact]
+        public async Task GetDiaryEntryDeleteDetailsAsync_ThrowsForNonExistent()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var service = new DiaryEntriesService(context);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentException>(
+                () => service.GetDiaryEntryDeleteDetailsAsync(999));
         }
     }
 }
