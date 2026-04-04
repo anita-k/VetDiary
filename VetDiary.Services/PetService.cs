@@ -55,7 +55,7 @@ namespace VetDiary.Services
             .ToListAsync();
         }
 
-        public async Task<PaginatedList<PetIndexViewModel>> GetAllPetsAsync(int page, int pageSize, string? searchTerm = null, int? speciesId = null)
+        public async Task<PaginatedList<PetIndexViewModel>> GetAllPetsAsync(int page, int pageSize, string? searchTerm = null, int? speciesId = null, string? sortBy = null, bool sortDesc = false)
         {
             var query = _context.Pets
                 .Include(p => p.Client)
@@ -77,6 +77,15 @@ namespace VetDiary.Services
             {
                 query = query.Where(p => p.SpeciesId == speciesId.Value);
             }
+
+            query = sortBy switch
+            {
+                "name" => sortDesc ? query.OrderByDescending(p => p.Name) : query.OrderBy(p => p.Name),
+                "client" => sortDesc ? query.OrderByDescending(p => p.Client.FirstName).ThenByDescending(p => p.Client.LastName) : query.OrderBy(p => p.Client.FirstName).ThenBy(p => p.Client.LastName),
+                "species" => sortDesc ? query.OrderByDescending(p => p.Species.Name) : query.OrderBy(p => p.Species.Name),
+                "breed" => sortDesc ? query.OrderByDescending(p => p.Breed!.Name) : query.OrderBy(p => p.Breed!.Name),
+                _ => query.OrderBy(p => p.Name)
+            };
 
             var count = await query.CountAsync();
             var items = await query

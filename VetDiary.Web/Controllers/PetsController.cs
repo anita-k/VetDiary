@@ -24,16 +24,18 @@ namespace VetDiary.Controllers
 
         // GET: Pets
         [AllowAnonymous]
-        public async Task<IActionResult> Index(int page = 1, string? searchTerm = null, int? speciesId = null)
+        public async Task<IActionResult> Index(int page = 1, string? searchTerm = null, int? speciesId = null, string? sortBy = null, bool sortDesc = false)
         {
             const int pageSize = 10;
-            var pets = await _petsService.GetAllPetsAsync(page, pageSize, searchTerm, speciesId);
+            var pets = await _petsService.GetAllPetsAsync(page, pageSize, searchTerm, speciesId, sortBy, sortDesc);
             ViewBag.PageIndex = pets.PageIndex;
             ViewBag.TotalPages = pets.TotalPages;
             ViewBag.HasPreviousPage = pets.HasPreviousPage;
             ViewBag.HasNextPage = pets.HasNextPage;
             ViewBag.SearchTerm = searchTerm;
             ViewBag.SpeciesId = speciesId;
+            ViewBag.SortBy = sortBy;
+            ViewBag.SortDesc = sortDesc;
             return View(pets.Items);
         }
 
