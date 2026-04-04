@@ -31,6 +31,11 @@
     <thead>
         <tr>
             <th>
+                <a asp-action="Index" asp-route-sortBy="id" asp-route-sortDesc="@(currentSort == "id" && !currentDesc)" asp-route-searchTerm="@searchTerm" asp-route-speciesId="@speciesId">
+                    # @(currentSort == "id" ? (currentDesc ? "\u25BC" : "\u25B2") : "")
+                </a>
+            </th>
+            <th>
                 <a asp-action="Index" asp-route-sortBy="name" asp-route-sortDesc="@(currentSort == "name" && !currentDesc)" asp-route-searchTerm="@searchTerm" asp-route-speciesId="@speciesId">
                     Name @(currentSort == "name" ? (currentDesc ? "\u25BC" : "\u25B2") : "")
                 </a>
@@ -56,6 +61,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @item.Id
+            </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">
                     @Html.DisplayFor(modelItem => item.Name)

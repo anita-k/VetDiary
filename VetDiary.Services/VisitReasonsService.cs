@@ -37,8 +37,9 @@ namespace VetDiary.Services
 
             query = sortBy switch
             {
+                "id" => sortDesc ? query.OrderByDescending(v => v.Id) : query.OrderBy(v => v.Id),
                 "name" => sortDesc ? query.OrderByDescending(v => v.Name) : query.OrderBy(v => v.Name),
-                _ => query.OrderBy(v => v.Name)
+                _ => query.OrderBy(v => v.Id)
             };
 
             var count = await query.CountAsync();
