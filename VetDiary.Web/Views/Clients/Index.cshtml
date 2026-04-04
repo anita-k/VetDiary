@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Clients";
+    string? currentSort = ViewBag.SortBy as string;
+    bool currentDesc = (bool)(ViewBag.SortDesc ?? false);
+    string? searchTerm = ViewBag.SearchTerm as string;
 }
 
 <h1>Clients</h1>
@@ -26,13 +29,19 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FullName)
+                <a asp-action="Index" asp-route-sortBy="name" asp-route-sortDesc="@(currentSort == "name" && !currentDesc)" asp-route-searchTerm="@searchTerm">
+                    Full Name @(currentSort == "name" ? (currentDesc ? "\u25BC" : "\u25B2") : "")
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Phone)
+                <a asp-action="Index" asp-route-sortBy="phone" asp-route-sortDesc="@(currentSort == "phone" && !currentDesc)" asp-route-searchTerm="@searchTerm">
+                    Phone @(currentSort == "phone" ? (currentDesc ? "\u25BC" : "\u25B2") : "")
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Email)
+                <a asp-action="Index" asp-route-sortBy="email" asp-route-sortDesc="@(currentSort == "email" && !currentDesc)" asp-route-searchTerm="@searchTerm">
+                    Email @(currentSort == "email" ? (currentDesc ? "\u25BC" : "\u25B2") : "")
+                </a>
             </th>
             <th></th>
         </tr>

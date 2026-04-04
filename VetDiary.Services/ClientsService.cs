@@ -34,7 +34,7 @@ namespace VetDiary.Services
             .ToListAsync();
         }
 
-        public async Task<PaginatedList<ClientIndexViewModel>> GetAllClientsAsync(int page, int pageSize, string? searchTerm = null)
+        public async Task<PaginatedList<ClientIndexViewModel>> GetAllClientsAsync(int page, int pageSize, string? searchTerm = null, string? sortBy = null, bool sortDesc = false)
         {
             var query = _context.Clients.AsQueryable();
 
@@ -47,6 +47,14 @@ namespace VetDiary.Services
                     c.Address.Contains(searchTerm) ||
                     (c.Email != null && c.Email.Contains(searchTerm)));
             }
+
+            query = sortBy switch
+            {
+                "name" => sortDesc ? query.OrderByDescending(c => c.FirstName).ThenByDescending(c => c.LastName) : query.OrderBy(c => c.FirstName).ThenBy(c => c.LastName),
+                "phone" => sortDesc ? query.OrderByDescending(c => c.Phone) : query.OrderBy(c => c.Phone),
+                "email" => sortDesc ? query.OrderByDescending(c => c.Email) : query.OrderBy(c => c.Email),
+                _ => query.OrderBy(c => c.FirstName).ThenBy(c => c.LastName)
+            };
 
             var count = await query.CountAsync();
             var items = await query
