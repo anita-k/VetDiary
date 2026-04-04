@@ -27,7 +27,7 @@ namespace VetDiary.Services
             .ToListAsync();
         }
 
-        public async Task<PaginatedList<SpeciesIndexViewModel>> GetAllSpeciesAsync(int page, int pageSize, string? searchTerm = null)
+        public async Task<PaginatedList<SpeciesIndexViewModel>> GetAllSpeciesAsync(int page, int pageSize, string? searchTerm = null, string? sortBy = null, bool sortDesc = false)
         {
             var query = _context.Species.AsQueryable();
 
@@ -35,6 +35,12 @@ namespace VetDiary.Services
             {
                 query = query.Where(s => s.Name.Contains(searchTerm));
             }
+
+            query = sortBy switch
+            {
+                "name" => sortDesc ? query.OrderByDescending(s => s.Name) : query.OrderBy(s => s.Name),
+                _ => query.OrderBy(s => s.Name)
+            };
 
             var count = await query.CountAsync();
             var items = await query

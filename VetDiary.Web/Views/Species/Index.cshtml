@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Species";
+    string? currentSort = ViewBag.SortBy as string;
+    bool currentDesc = (bool)(ViewBag.SortDesc ?? false);
+    string? searchTerm = ViewBag.SearchTerm as string;
 }
 
 <h1>Species</h1>
@@ -26,7 +29,9 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                <a asp-action="Index" asp-route-sortBy="name" asp-route-sortDesc="@(currentSort == "name" && !currentDesc)" asp-route-searchTerm="@searchTerm">
+                    Name @(currentSort == "name" ? (currentDesc ? "\u25BC" : "\u25B2") : "")
+                </a>
             </th>
             <th></th>
         </tr>
