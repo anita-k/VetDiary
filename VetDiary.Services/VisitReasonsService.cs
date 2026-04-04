@@ -26,7 +26,7 @@ namespace VetDiary.Services
             .ToListAsync();
         }
 
-        public async Task<PaginatedList<VisitReasonIndexViewModel>> GetAllVisitReasonsAsync(int page, int pageSize, string? searchTerm = null)
+        public async Task<PaginatedList<VisitReasonIndexViewModel>> GetAllVisitReasonsAsync(int page, int pageSize, string? searchTerm = null, string? sortBy = null, bool sortDesc = false)
         {
             var query = _context.VisitReasons.AsQueryable();
 
@@ -34,6 +34,12 @@ namespace VetDiary.Services
             {
                 query = query.Where(v => v.Name.Contains(searchTerm));
             }
+
+            query = sortBy switch
+            {
+                "name" => sortDesc ? query.OrderByDescending(v => v.Name) : query.OrderBy(v => v.Name),
+                _ => query.OrderBy(v => v.Name)
+            };
 
             var count = await query.CountAsync();
             var items = await query
