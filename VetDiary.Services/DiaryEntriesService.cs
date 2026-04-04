@@ -74,7 +74,7 @@ namespace VetDiary.Services
             .ToListAsync();
         }
 
-        public async Task<PaginatedList<DiaryEntryIndexViewModel>> GetAllDiaryEntriesAsync(int page, int pageSize, string? searchTerm = null, int? visitReasonId = null)
+        public async Task<PaginatedList<DiaryEntryIndexViewModel>> GetAllDiaryEntriesAsync(int page, int pageSize, string? searchTerm = null, int? visitReasonId = null, string? sortBy = null, bool sortDesc = false)
         {
             var query = _context.DiaryEntries
                 .Include(d => d.Pet)
@@ -101,9 +101,17 @@ namespace VetDiary.Services
                 query = query.Where(d => d.VisitReasonId == visitReasonId.Value);
             }
 
+            query = sortBy switch
+            {
+                "date" => sortDesc ? query.OrderByDescending(d => d.VisitDate) : query.OrderBy(d => d.VisitDate),
+                "pet" => sortDesc ? query.OrderByDescending(d => d.Pet.Name) : query.OrderBy(d => d.Pet.Name),
+                "client" => sortDesc ? query.OrderByDescending(d => d.Pet.Client.FirstName).ThenByDescending(d => d.Pet.Client.LastName) : query.OrderBy(d => d.Pet.Client.FirstName).ThenBy(d => d.Pet.Client.LastName),
+                "reason" => sortDesc ? query.OrderByDescending(d => d.VisitReason.Name) : query.OrderBy(d => d.VisitReason.Name),
+                _ => query.OrderByDescending(d => d.VisitDate)
+            };
+
             var count = await query.CountAsync();
             var items = await query
-                .OrderByDescending(d => d.VisitDate)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(d => new DiaryEntryIndexViewModel

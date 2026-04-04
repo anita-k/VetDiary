@@ -21,16 +21,18 @@ namespace VetDiary.Controllers
 
         // GET: DiaryEntries
         [AllowAnonymous]
-        public async Task<IActionResult> Index(int page = 1, string? searchTerm = null, int? visitReasonId = null)
+        public async Task<IActionResult> Index(int page = 1, string? searchTerm = null, int? visitReasonId = null, string? sortBy = null, bool sortDesc = false)
         {
             const int pageSize = 10;
-            var diaryEntries = await _diaryEntryService.GetAllDiaryEntriesAsync(page, pageSize, searchTerm, visitReasonId);
+            var diaryEntries = await _diaryEntryService.GetAllDiaryEntriesAsync(page, pageSize, searchTerm, visitReasonId, sortBy, sortDesc);
             ViewBag.PageIndex = diaryEntries.PageIndex;
             ViewBag.TotalPages = diaryEntries.TotalPages;
             ViewBag.HasPreviousPage = diaryEntries.HasPreviousPage;
             ViewBag.HasNextPage = diaryEntries.HasNextPage;
             ViewBag.SearchTerm = searchTerm;
             ViewBag.VisitReasonId = visitReasonId;
+            ViewBag.SortBy = sortBy;
+            ViewBag.SortDesc = sortDesc;
             return View(diaryEntries.Items);
         }
 

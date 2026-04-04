@@ -2,6 +2,10 @@
 
 @{
     ViewData["Title"] = "Diary Entries";
+    string? currentSort = ViewBag.SortBy as string;
+    bool currentDesc = (bool)(ViewBag.SortDesc ?? false);
+    string? searchTerm = ViewBag.SearchTerm as string;
+    int? visitReasonId = ViewBag.VisitReasonId as int?;
 }
 
 <h1>Diary Entries</h1>
@@ -27,16 +31,24 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.VisitDate)
+                <a asp-action="Index" asp-route-sortBy="date" asp-route-sortDesc="@(currentSort == "date" && !currentDesc)" asp-route-searchTerm="@searchTerm" asp-route-visitReasonId="@visitReasonId">
+                    Visit Date @(currentSort == "date" ? (currentDesc ? "\u25BC" : "\u25B2") : "")
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Pet)
+                <a asp-action="Index" asp-route-sortBy="pet" asp-route-sortDesc="@(currentSort == "pet" && !currentDesc)" asp-route-searchTerm="@searchTerm" asp-route-visitReasonId="@visitReasonId">
+                    Pet @(currentSort == "pet" ? (currentDesc ? "\u25BC" : "\u25B2") : "")
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Pet.Client)
+                <a asp-action="Index" asp-route-sortBy="client" asp-route-sortDesc="@(currentSort == "client" && !currentDesc)" asp-route-searchTerm="@searchTerm" asp-route-visitReasonId="@visitReasonId">
+                    Client @(currentSort == "client" ? (currentDesc ? "\u25BC" : "\u25B2") : "")
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.VisitReason)
+                <a asp-action="Index" asp-route-sortBy="reason" asp-route-sortDesc="@(currentSort == "reason" && !currentDesc)" asp-route-searchTerm="@searchTerm" asp-route-visitReasonId="@visitReasonId">
+                    Visit Reason @(currentSort == "reason" ? (currentDesc ? "\u25BC" : "\u25B2") : "")
+                </a>
             </th>
             <th></th>
         </tr>

@@ -7,7 +7,7 @@ namespace VetDiary.Services.Interfaces
     {
         Task<IEnumerable<DiaryEntryIndexViewModel>> GetAllDiaryEntriesAsync();
 
-        Task<PaginatedList<DiaryEntryIndexViewModel>> GetAllDiaryEntriesAsync(int page, int pageSize, string? searchTerm = null, int? visitReasonId = null);
+        Task<PaginatedList<DiaryEntryIndexViewModel>> GetAllDiaryEntriesAsync(int page, int pageSize, string? searchTerm = null, int? visitReasonId = null, string? sortBy = null, bool sortDesc = false);
 
         Task<DiaryEntryDetailsViewModel> GetDiaryEntryDetailsByIdAsync(int id);
 
