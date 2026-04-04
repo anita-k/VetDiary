@@ -1,6 +1,7 @@
 using VetDiary.Data.Models;
 using VetDiary.Shared;
 using VetDiary.ViewModels.DiaryEntry;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VetDiary.Services.Tests
 {
@@ -68,6 +69,7 @@ namespace VetDiary.Services.Tests
         {
             // Arrange
             var context = TestDbContextFactory.Create();
+            // First three variables are discarded with _ to avoid unused variable warnings
             var (_, _, _, pet, visitReason) = SeedFullData(context);
 
             for (int i = 1; i <= 5; i++)
@@ -121,6 +123,7 @@ namespace VetDiary.Services.Tests
         {
             // Arrange
             var context = TestDbContextFactory.Create();
+            // First three variables are discarded with _ to avoid unused variable warnings
             var (_, _, _, pet, visitReason) = SeedFullData(context);
 
             var otherReason = new VisitReason { Name = "Surgery" };
@@ -141,5 +144,152 @@ namespace VetDiary.Services.Tests
             Assert.Single(result.Items);
             Assert.Equal(otherReason.Id, result.Items.First().VisitReasonId);
         }
+
+        [Fact]
+        public async Task GetDiaryEntryDetailsByIdAsync_ReturnsEntryWithAllRelatedData()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            // First three variables are discarded with _ to avoid unused variable warnings
+            var (_, _, _, pet, visitReason) = SeedFullData(context);
+
+            var entry = new DiaryEntry
+            {
+                PetId = pet.Id,
+                VisitDate = new DateTime(2025, 6, 15),
+                VisitReasonId = visitReason.Id,
+                Description = "Routine checkup",
+                Weight = 25.5f,
+                Temperature = 38.5f,
+                Pulse = 80,
+                Behaviour = "Calm",
+                BodyConditionScore = 5
+            };
+            context.DiaryEntries.Add(entry);
+            await context.SaveChangesAsync();
+            var service = new DiaryEntriesService(context);
+
+            // Act
+            var result = await service.GetDiaryEntryDetailsByIdAsync(entry.Id);
+
+            // Assert
+            Assert.Equal(entry.Id, result.Id);
+            Assert.Equal(pet.Id, result.PetId);
+            Assert.NotNull(result.Pet);
+            Assert.Equal("Buddy", result.Pet.Name);
+            Assert.NotNull(result.Pet.Client);
+            Assert.NotNull(result.Pet.Species);
+            Assert.NotNull(result.VisitReason);
+            Assert.Equal("Checkup", result.VisitReason.Name);
+            Assert.Equal("Routine checkup", result.Description);
+            Assert.Equal(25.5f, result.Weight);
+            Assert.Equal(38.5f, result.Temperature);
+            Assert.Equal(80, result.Pulse);
+            Assert.Equal("Calm", result.Behaviour);
+            Assert.Equal(5, result.BodyConditionScore);
+        }
+
+        [Fact]
+        public async Task GetDiaryEntryDetailsByIdAsync_ThrowsForNonExistent()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var service = new DiaryEntriesService(context);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => service.GetDiaryEntryDetailsByIdAsync(999));
+        }
+
+        [Fact]
+        public async Task AddDiaryEntryAsync_AddsEntry()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            // First three variables are discarded with _ to avoid unused variable warnings
+            var (_, _, _, pet, visitReason) = SeedFullData(context);
+            var service = new DiaryEntriesService(context);
+
+            var model = new DiaryEntryCreateViewModel
+            {
+                PetId = pet.Id,
+                VisitDate = new DateTime(2025, 7, 1),
+                VisitReasonId = visitReason.Id,
+                Description = "New entry",
+                Weight = 30.0f,
+                Temperature = 39.0f,
+                Pulse = 90,
+                Behaviour = "Active",
+                BodyConditionScore = 6
+            };
+
+            // Act
+            await service.AddDiaryEntryAsync(model);
+
+            // Assert
+            Assert.Equal(1, context.DiaryEntries.Count());
+            var entry = context.DiaryEntries.First();
+            Assert.Equal(pet.Id, entry.PetId);
+            Assert.Equal(visitReason.Id, entry.VisitReasonId);
+            Assert.Equal("New entry", entry.Description);
+            Assert.Equal(30.0f, entry.Weight);
+            Assert.Equal(39.0f, entry.Temperature);
+            Assert.Equal(90, entry.Pulse);
+            Assert.Equal("Active", entry.Behaviour);
+            Assert.Equal(6, entry.BodyConditionScore);
+        }
+
+        [Fact]
+        public async Task GetDiaryEntryForEditAsync_ReturnsEditModelWithDropdowns()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            // First three variables are discarded with _ to avoid unused variable warnings
+            var (_, _, _, pet, visitReason) = SeedFullData(context);
+
+            var entry = new DiaryEntry
+            {
+                PetId = pet.Id,
+                VisitDate = DateTime.Now,
+                VisitReasonId = visitReason.Id,
+                Description = "Test",
+                Weight = 20.0f,
+                Temperature = 38.0f,
+                Pulse = 70,
+                Behaviour = "Normal",
+                BodyConditionScore = 4
+            };
+            context.DiaryEntries.Add(entry);
+            await context.SaveChangesAsync();
+            var service = new DiaryEntriesService(context);
+
+            // Act
+            var result = await service.GetDiaryEntryForEditAsync(entry.Id);
+
+            // Assert
+            Assert.Equal(entry.Id, result.Id);
+            Assert.Equal(pet.Id, result.PetId);
+            Assert.Equal(visitReason.Id, result.VisitReasonId);
+            Assert.Equal("Test", result.Description);
+            Assert.Equal(20.0f, result.Weight);
+            Assert.NotNull(result.Pet);
+            Assert.NotNull(result.VisitReason);
+            Assert.NotNull(result.Pets);
+            Assert.NotNull(result.VisitReasons);
+            Assert.Single(result.Pets!);
+            Assert.Single(result.VisitReasons!);
+        }
+
+        [Fact]
+        public async Task GetDiaryEntryForEditAsync_ThrowsForNonExistent()
+        {
+            // Arrange
+            var context = TestDbContextFactory.Create();
+            var service = new DiaryEntriesService(context);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => service.GetDiaryEntryForEditAsync(999));
+        }
     }
-}        
+}
