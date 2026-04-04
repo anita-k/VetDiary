@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using VetDiary.Data.Models;
 using VetDiary.Shared;
 using VetDiary.ViewModels.Breed;
@@ -9,7 +9,11 @@ namespace VetDiary.ViewModels.Pet
 {
     public class PetEditViewModel
     {
+        [Required]
         public int Id { get; set; }
+
+        [Required]
+        [StringLength(ValidationConstants.PetNameMaxLength)]
         public string Name { get; set; } = null!;
 
         public PetGender? Gender { get; set; } = null;
@@ -26,9 +30,11 @@ namespace VetDiary.ViewModels.Pet
         [Display(Name = "Passport Number")]
         public string? PassportNumber { get; set; } = string.Empty;
 
+        [Required]
         [Display(Name = "Client")]
         public int ClientId { get; set; }
 
+        [Required]
         [Display(Name = "Species")]
         public int SpeciesId { get; set; }
 

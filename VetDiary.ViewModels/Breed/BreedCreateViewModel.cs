@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using VetDiary.Shared;
 using VetDiary.ViewModels.Species;
 
 namespace VetDiary.ViewModels.Breed
@@ -6,6 +7,7 @@ namespace VetDiary.ViewModels.Breed
     public class BreedCreateViewModel
     {
         [Required]
+        [StringLength(ValidationConstants.BreedNameMaxLength)]
         public string Name { get; set; } = null!;
 
         [Required]
