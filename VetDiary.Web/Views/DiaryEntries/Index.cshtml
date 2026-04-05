@@ -18,7 +18,7 @@
         <form method="get" class="d-flex">
             <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" class="form-control me-2" 
             placeholder="Search by pet, owner, visit reason or description..." />
-            <button type="submit" class="btn btn-outline-secondary">Search</button>
+            <button type="submit" class="btn btn-primary">Search</button>
             @if (!string.IsNullOrEmpty(ViewBag.SearchTerm as string) || ViewBag.VisitReasonId != null)
             {
                 <a asp-action="Index" class="btn btn-outline-danger ms-1">Clear</a>
