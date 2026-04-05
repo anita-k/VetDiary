@@ -177,6 +177,7 @@ namespace VetDiary.Services
                     Id = d.VisitReasonId,
                     Name = d.VisitReason.Name,
                 },
+                Weight = d.Weight,
                 });
 
             return new PetDetailsViewModel

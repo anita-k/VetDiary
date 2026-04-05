@@ -20,5 +20,7 @@ namespace VetDiary.ViewModels.DiaryEntry
         [Display(Name = "Visit Reason")]
         public VisitReasonIndexViewModel VisitReason { get; set; } = null!;
 
+        public float? Weight { get; set; }
+
     }
 }

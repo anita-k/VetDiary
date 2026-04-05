@@ -177,3 +177,63 @@
     <a asp-controller="DiaryEntries" asp-action="Create" asp-route-petId="@Model?.Id">Add Diary Entry</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+@{
+    var weightEntries = Model?.DiaryEntries
+        .Where(d => d.Weight.HasValue)
+        .OrderBy(d => d.VisitDate)
+        .ToList();
+}
+
+@if (weightEntries != null && weightEntries.Count >= 2)
+{
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Weight History</h5>
+                        <canvas id="weightChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @if (weightEntries != null && weightEntries.Count >= 2)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const ctx = document.getElementById('weightChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [@Html.Raw(string.Join(",", weightEntries.Select(e => $"\"{e.VisitDate:dd MMM yyyy}\"")))],
+                    datasets: [{
+                        label: 'Weight (kg)',
+                        data: [@Html.Raw(string.Join(",", weightEntries.Select(e => e.Weight?.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))))],
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            title: { display: true, text: 'Weight (kg)' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Visit Date' }
+                        }
+                    }
+                }
+            });
+        </script>
+    }
+}
