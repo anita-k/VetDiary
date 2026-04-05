@@ -1,20 +1,24 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using VetDiary.Data.Models;
 using VetDiary.Services;
 using VetDiary.Services.Interfaces;
 using VetDiary.ViewModels.Breed;
+using VetDiary.Web.Hubs;
 
 namespace VetDiary.Controllers
 {
     public class BreedsController : BaseController
     {
         private readonly IBreedsService _breedsService;
+        private readonly IHubContext<DashboardHub> _dashboardHub;
 
-        public BreedsController(IBreedsService breedsService)
+        public BreedsController(IBreedsService breedsService, IHubContext<DashboardHub> dashboardHub)
         {
             _breedsService = breedsService;
+            _dashboardHub = dashboardHub;
         }
 
         // GET: Breeds
@@ -67,7 +71,7 @@ namespace VetDiary.Controllers
             if (ModelState.IsValid)
             {
                 await _breedsService.AddBreedAsync(breed);
-
+                await _dashboardHub.Clients.All.SendAsync("RefreshDashboard");
                 return RedirectToAction(nameof(Index));
             }
             return View(breed);
@@ -96,6 +100,7 @@ namespace VetDiary.Controllers
             if (ModelState.IsValid)
             {
                 await _breedsService.EditBreedAsync(breed);
+                await _dashboardHub.Clients.All.SendAsync("RefreshDashboard");
                 return RedirectToAction(nameof(Index));
             }
             var model = await _breedsService.GetBreedForEditAsync(breed.Id);
@@ -126,6 +131,7 @@ namespace VetDiary.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _breedsService.DeleteBreedAsync(id);
+            await _dashboardHub.Clients.All.SendAsync("RefreshDashboard");
             return RedirectToAction(nameof(Index));
         }
 

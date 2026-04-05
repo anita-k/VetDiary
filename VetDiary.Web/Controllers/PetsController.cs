@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -10,16 +11,19 @@ using VetDiary.Services;
 using VetDiary.Services.Interfaces;
 using VetDiary.ViewModels.Breed;
 using VetDiary.ViewModels.Pet;
+using VetDiary.Web.Hubs;
 
 namespace VetDiary.Controllers
 {
     public class PetsController : BaseController
     {
         private readonly IPetsService _petsService;
+        private readonly IHubContext<DashboardHub> _dashboardHub;
 
-        public PetsController(IPetsService petsService)
+        public PetsController(IPetsService petsService, IHubContext<DashboardHub> dashboardHub)
         {
             _petsService = petsService;
+            _dashboardHub = dashboardHub;
         }
 
         // GET: Pets
@@ -73,7 +77,7 @@ namespace VetDiary.Controllers
              if (ModelState.IsValid)
             {
                 await _petsService.AddPetAsync(pet);
-
+                await _dashboardHub.Clients.All.SendAsync("RefreshDashboard");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -107,6 +111,7 @@ namespace VetDiary.Controllers
             if (ModelState.IsValid)
             {
                 await _petsService.EditPetAsync(pet);
+                await _dashboardHub.Clients.All.SendAsync("RefreshDashboard");
                 return RedirectToAction(nameof(Index));
             }
             var model = await _petsService.GetPetForEditAsync(pet.Id);
@@ -141,6 +146,7 @@ namespace VetDiary.Controllers
             try
             {
                 await _petsService.DeletePetAsync(id);
+                await _dashboardHub.Clients.All.SendAsync("RefreshDashboard");
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException ex)

@@ -1,19 +1,24 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using VetDiary.Services.Interfaces;
 using VetDiary.ViewModels.VisitReason;
+using VetDiary.Web.Hubs;
 
 namespace VetDiary.Controllers
 {
     public class VisitReasonsController : BaseController
     {
         private readonly IVisitReasonsService _visitReasonsService;
+        private readonly IHubContext<DashboardHub> _dashboardHub;
 
         public VisitReasonsController(
-            IVisitReasonsService visitReasonsService
+            IVisitReasonsService visitReasonsService,
+            IHubContext<DashboardHub> dashboardHub
             )
         {
             _visitReasonsService = visitReasonsService;
+            _dashboardHub = dashboardHub;
         }
 
         // GET: VisitReasons
@@ -66,7 +71,7 @@ namespace VetDiary.Controllers
             {
 
                 await _visitReasonsService.AddVisitReasonAsync(visitReason);
-
+                await _dashboardHub.Clients.All.SendAsync("RefreshDashboard");
                 return RedirectToAction(nameof(Index));
             }
             return View(visitReason);
@@ -91,6 +96,7 @@ namespace VetDiary.Controllers
             if (ModelState.IsValid)
             {
                 await _visitReasonsService.EditVisitReasonAsync(visitReason);
+                await _dashboardHub.Clients.All.SendAsync("RefreshDashboard");
                 return RedirectToAction(nameof(Index));
             }
             return View(visitReason);

@@ -4,6 +4,7 @@ using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
 using VetDiary.Data;
 using VetDiary.Services;
 using VetDiary.Services.Interfaces;
+using VetDiary.Web.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,7 @@ builder.Services.AddScoped<IPetsService, PetsService>();
 builder.Services.AddScoped<IDiaryEntriesService, DiaryEntriesService>();
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -63,6 +65,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+app.MapHub<DashboardHub>("/hubs/dashboard");
 
 using (var scope = app.Services.CreateScope())
 {

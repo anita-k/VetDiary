@@ -27,5 +27,19 @@ namespace VetDiary.Web.Areas.Admin.Controllers
 
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Stats()
+        {
+            return Json(new
+            {
+                totalClients = await _context.Clients.CountAsync(),
+                totalPets = await _context.Pets.CountAsync(),
+                totalDiaryEntries = await _context.DiaryEntries.CountAsync(),
+                totalSpecies = await _context.Species.CountAsync(),
+                totalBreeds = await _context.Breeds.CountAsync(),
+                totalVisitReasons = await _context.VisitReasons.CountAsync()
+            });
+        }
     }
 }

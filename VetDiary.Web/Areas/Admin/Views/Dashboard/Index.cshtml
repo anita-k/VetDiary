@@ -10,7 +10,7 @@
         <div class="card text-white bg-primary">
             <div class="card-body">
                 <h5 class="card-title">Clients</h5>
-                <p class="card-text display-6">@ViewBag.TotalClients</p>
+                <p class="card-text display-6" id="stat-clients">@ViewBag.TotalClients</p>
                 <a asp-area="" asp-controller="Clients" asp-action="Index" class="text-white">View All</a>
             </div>
         </div>
@@ -19,7 +19,7 @@
         <div class="card text-white bg-success">
             <div class="card-body">
                 <h5 class="card-title">Pets</h5>
-                <p class="card-text display-6">@ViewBag.TotalPets</p>
+                <p class="card-text display-6" id="stat-pets">@ViewBag.TotalPets</p>
                 <a asp-area="" asp-controller="Pets" asp-action="Index" class="text-white">View All</a>
             </div>
         </div>
@@ -28,7 +28,7 @@
         <div class="card text-white bg-info">
             <div class="card-body">
                 <h5 class="card-title">Diary Entries</h5>
-                <p class="card-text display-6">@ViewBag.TotalDiaryEntries</p>
+                <p class="card-text display-6" id="stat-diary">@ViewBag.TotalDiaryEntries</p>
                 <a asp-area="" asp-controller="DiaryEntries" asp-action="Index" class="text-white">View All</a>
             </div>
         </div>
@@ -40,7 +40,7 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Species</h5>
-                <p class="card-text display-6">@ViewBag.TotalSpecies</p>
+                <p class="card-text display-6" id="stat-species">@ViewBag.TotalSpecies</p>
                 <a asp-area="" asp-controller="Species" asp-action="Index" class="text-dark">View All</a>
             </div>
         </div>
@@ -49,7 +49,7 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Breeds</h5>
-                <p class="card-text display-6">@ViewBag.TotalBreeds</p>
+                <p class="card-text display-6" id="stat-breeds">@ViewBag.TotalBreeds</p>
                 <a asp-area="" asp-controller="Breeds" asp-action="Index" class="text-dark">View All</a>
             </div>
         </div>
@@ -58,9 +58,32 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Visit Reasons</h5>
-                <p class="card-text display-6">@ViewBag.TotalVisitReasons</p>
+                <p class="card-text display-6" id="stat-visitreasons">@ViewBag.TotalVisitReasons</p>
                 <a asp-area="" asp-controller="VisitReasons" asp-action="Index" class="text-dark">View All</a>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/hubs/dashboard")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("RefreshDashboard", async () => {
+            const response = await fetch("/Admin/Dashboard/Stats");
+            const data = await response.json();
+            document.getElementById("stat-clients").textContent = data.totalClients;
+            document.getElementById("stat-pets").textContent = data.totalPets;
+            document.getElementById("stat-diary").textContent = data.totalDiaryEntries;
+            document.getElementById("stat-species").textContent = data.totalSpecies;
+            document.getElementById("stat-breeds").textContent = data.totalBreeds;
+            document.getElementById("stat-visitreasons").textContent = data.totalVisitReasons;
+        });
+
+        connection.start().catch(err => console.error("SignalR connection error:", err));
+    </script>
+}

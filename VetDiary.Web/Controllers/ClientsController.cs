@@ -1,17 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using VetDiary.Services.Interfaces;
 using VetDiary.ViewModels.Client;
+using VetDiary.Web.Hubs;
 
 namespace VetDiary.Controllers
 {
     public class ClientsController : BaseController
     {
         private readonly IClientsService _clientsService;
+        private readonly IHubContext<DashboardHub> _dashboardHub;
 
-        public ClientsController(IClientsService clientsService)
+        public ClientsController(IClientsService clientsService, IHubContext<DashboardHub> dashboardHub)
         {
             _clientsService = clientsService;
+            _dashboardHub = dashboardHub;
         }
 
         // GET: Clients
@@ -63,7 +67,7 @@ namespace VetDiary.Controllers
             if (ModelState.IsValid)
             {
                 await _clientsService.AddClientAsync(client);
-
+                await _dashboardHub.Clients.All.SendAsync("RefreshDashboard");
                 return RedirectToAction(nameof(Index));
             }
             return View(client);
@@ -92,6 +96,7 @@ namespace VetDiary.Controllers
             if (ModelState.IsValid)
             {
                 await _clientsService.EditClientAsync(client);
+                await _dashboardHub.Clients.All.SendAsync("RefreshDashboard");
                 return RedirectToAction(nameof(Index));
             }
             return View(client);
@@ -118,6 +123,7 @@ namespace VetDiary.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _clientsService.DeleteClientAsync(id);
+            await _dashboardHub.Clients.All.SendAsync("RefreshDashboard");
             return RedirectToAction(nameof(Index));
         }
 

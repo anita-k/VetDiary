@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using VetDiary.Data;
 using VetDiary.Data.Models;
@@ -7,16 +8,19 @@ using VetDiary.Services;
 using VetDiary.Services.Interfaces;
 using VetDiary.ViewModels.DiaryEntry;
 using VetDiary.ViewModels.Pet;
+using VetDiary.Web.Hubs;
 
 namespace VetDiary.Controllers
 {
     public class DiaryEntriesController : BaseController
     {
         private readonly IDiaryEntriesService _diaryEntryService;
+        private readonly IHubContext<DashboardHub> _dashboardHub;
 
-        public DiaryEntriesController(IDiaryEntriesService diaryentryService)
+        public DiaryEntriesController(IDiaryEntriesService diaryentryService, IHubContext<DashboardHub> dashboardHub)
         {
             _diaryEntryService = diaryentryService;
+            _dashboardHub = dashboardHub;
         }
 
         // GET: DiaryEntries
@@ -70,7 +74,7 @@ namespace VetDiary.Controllers
             if (ModelState.IsValid)
             {
                 await _diaryEntryService.AddDiaryEntryAsync(diaryEntry);
-
+                await _dashboardHub.Clients.All.SendAsync("RefreshDashboard");
                 return RedirectToAction(nameof(Index));
             }
             var model = await _diaryEntryService.GetDiaryEntryCreateViewModelAsync();
@@ -102,6 +106,7 @@ namespace VetDiary.Controllers
             if (ModelState.IsValid)
             {
                 await _diaryEntryService.EditDiaryEntryAsync(diaryEntry);
+                await _dashboardHub.Clients.All.SendAsync("RefreshDashboard");
                 return RedirectToAction(nameof(Index));
             }
             var model = await _diaryEntryService.GetDiaryEntryForEditAsync(diaryEntry.Id);
@@ -133,6 +138,7 @@ namespace VetDiary.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _diaryEntryService.DeleteDiaryEntryAsync(id);
+            await _dashboardHub.Clients.All.SendAsync("RefreshDashboard");
             return RedirectToAction(nameof(Index));
         }
 
