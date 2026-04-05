@@ -65,13 +65,22 @@
     </div>
 </div>
 
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Online Staff Members</h5>
+                <div id="online-users">
+                    <span class="text-muted">Connecting...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script>
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/hubs/dashboard")
-            .withAutomaticReconnect()
-            .build();
+        const connection = window.dashboardConnection;
 
         connection.on("RefreshDashboard", async () => {
             const response = await fetch("/Admin/Dashboard/Stats");
@@ -84,6 +93,15 @@
             document.getElementById("stat-visitreasons").textContent = data.totalVisitReasons;
         });
 
-        connection.start().catch(err => console.error("SignalR connection error:", err));
+        connection.on("UpdateOnlineUsers", (users) => {
+            const container = document.getElementById("online-users");
+            if (users.length === 0) {
+                container.innerHTML = '<span class="text-muted">No users online</span>';
+                return;
+            }
+            container.innerHTML = users.map(u =>
+                `<span class="badge ${u.role === 'Administrator' ? 'bg-danger' : 'bg-success'} me-2 mb-1"><span class="me-1">&#9679;</span>${u.email} (${u.role})</span>`
+            ).join("");
+        });
     </script>
 }
