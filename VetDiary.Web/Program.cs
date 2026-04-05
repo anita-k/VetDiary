@@ -92,7 +92,7 @@ static async Task SeedRolesAndAdminAsync(IServiceProvider serviceProvider)
 
     //Credentials left for demo purposes
     const string adminEmail = "admin@vetdiary.com";
-    const string adminPassword = "Admin123";
+    const string adminPassword = "Admin1234!";
 
     var adminUser = await userManager.FindByEmailAsync(adminEmail);
     if (adminUser == null)
@@ -103,7 +103,14 @@ static async Task SeedRolesAndAdminAsync(IServiceProvider serviceProvider)
             Email = adminEmail,
             EmailConfirmed = true
         };
-        await userManager.CreateAsync(adminUser, adminPassword);
+        var result = await userManager.CreateAsync(adminUser, adminPassword);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, "Administrator");
+        }
+    }
+    else if (!await userManager.IsInRoleAsync(adminUser, "Administrator"))
+    {
         await userManager.AddToRoleAsync(adminUser, "Administrator");
     }
 }
